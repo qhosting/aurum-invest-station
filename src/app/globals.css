@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+/* AURUM INVEST STATION - Color System */
+:root {
+  /* Primary Colors */
+  --background: #0A192F; /* Main page background */
+  --foreground: #E2E8F0; /* Primary text */
+  
+  /* Surface Colors */
+  --surface: #12233A; /* Cards, modals, inputs */
+  --muted: #1E293B;
+  --accent: #334155;
+  
+  /* Border Colors */
+  --border: #243750;
+  --input: #243750;
+  --ring: #D4AF37; /* Focus ring (gold) */
+  
+  /* Primary Brand */
+  --primary: #D4AF37; /* Gold */
+  --primary-foreground: #0A192F; /* Text on primary buttons */
+  
+  /* Semantic Colors */
+  --success: #10B981; /* Win badges, positive PnL */
+  --success-foreground: #F0FFF4;
+  
+  --error: #EF4444; /* Loss badges, negative PnL */
+  --error-foreground: #FFF1F2;
+  
+  /* Text Colors */
+  --foreground-muted: #94A3B8; /* Secondary text */
+  
+  /* Popover */
+  --popover: #12233A;
+  --popover-foreground: #E2E8F0;
+  
+  /* Muted */
+  --muted-foreground: #94A3B8;
+  
+  /* Card */
+  --card: #12233A;
+  --card-foreground: #E2E8F0;
+  
+  /* Fonts */
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-fira-code);
+}
+
+/* Dark theme is default */
+* {
+  border-color: var(--border);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Inter, system-ui, -apple-system, sans-serif;
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* Smooth transitions */
+* {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+/* Focus styles */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* Selection styles */
+::selection {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+/* Code font for data/tables */
+.font-mono, 
+.data-font {
+  font-family: var(--font-mono), 'Fira Code', 'Consolas', monospace;
+}

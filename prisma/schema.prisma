@@ -1,0 +1,107 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("TRADER") // SUPER_ADMIN or TRADER
+  apiKey    String   @unique @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  trades         Trade[]
+  journalEntries JournalEntry[]
+
+  @@map("users")
+}
+
+model Trade {
+  id          String     @id @default(cuid())
+  userId      String
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Trade Details
+  symbol      String
+  type        String     // BUY or SELL
+  openPrice   Float
+  closePrice  Float?
+  sl          Float?     // Stop Loss
+  tp          Float?     // Take Profit
+  profit      Float?
+  openTime    DateTime
+  closeTime   DateTime?
+  status      String     @default("OPEN") // OPEN, CLOSED, or PENDING
+  
+  // Additional Info
+  strategy    String?
+  magicNumber Int?
+  screenshotUrl String?
+  notes       String?
+  
+  // Relations
+  journalEntries JournalEntry[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("trades")
+}
+
+model JournalEntry {
+  id      String @id @default(cuid())
+  tradeId String
+  trade   Trade  @relation(fields: [tradeId], references: [id], onDelete: Cascade)
+  userId  String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Journal Content
+  emotionalState String?
+  mistakes       String?
+  aiFeedback     String?
+  learning       String?
+  
+  // Analysis
+  lessons        String?
+  nextSteps      String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("journal_entries")
+}
+
+model SystemSettings {
+  id    String @id @default("1")
+  
+  // AI Integration
+  chatwootToken    String?
+  chatwootUrl      String?
+  aiModel          String? @default("gpt-4")
+  
+  // Automation
+  n8nWebhookUrl    String?
+  mt5ConnectorUrl  String?
+  
+  // Email Configuration
+  smtpHost         String?
+  smtpPort         Int?    @default(587)
+  smtpUser         String?
+  smtpPassword     String?
+  
+  // Trading Configuration
+  defaultRisk      Float?  @default(0.02)
+  defaultRR        Float?  @default(2.0)
+  
+  updatedAt DateTime @updatedAt
+
+  @@map("system_settings")
+}
