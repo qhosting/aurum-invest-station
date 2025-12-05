@@ -14,6 +14,8 @@ Plataforma profesional de trading algorítmico con análisis en tiempo real, jou
 - **TypeScript Completo**: Tipado estricto en toda la aplicación
 - **Componentes Reutilizables**: Biblioteca completa de componentes Shadcn/UI
 - **Base de Datos Flexible**: Soporte para SQLite (desarrollo) y PostgreSQL (producción)
+- **🐳 Despliegue Docker**: Multi-stage build optimizado para EasyPanel con health checks
+- **⚡ Performance**: Output standalone, server components optimizados y cache de dependencias
 
 ## 🛠️ Stack Tecnológico
 
@@ -39,6 +41,14 @@ Plataforma profesional de trading algorítmico con análisis en tiempo real, jou
 - **JWT** para manejo de sesiones
 - **RBAC**: Sistema de roles con SUPER_ADMIN y TRADER
 - **Server Actions**: Mutations del lado del servidor sin API routes
+
+### DevOps & Deployment
+- **Docker**: Multi-stage builds optimizados para producción
+- **EasyPanel**: Despliegue simplificado con Docker
+- **Health Checks**: Endpoints de monitoreo automático
+- **Standalone Build**: Output optimizado para contenedores
+- **SQLite**: Base de datos embebida para desarrollo y producción ligera
+- **PostgreSQL**: Base de datos escalable para producción
 
 ## 📋 Requisitos Previos
 
@@ -141,6 +151,58 @@ node test-setup.js
 
 La aplicación estará disponible en [http://localhost:3000](http://localhost:3000)
 
+## 🐳 Despliegue con Docker (EasyPanel)
+
+### Preparación para Producción
+
+1. **Configurar Variables de Entorno**:
+   ```bash
+   # Copiar plantilla de variables de entorno
+   cp .env.example .env.production
+   
+   # Generar claves secretas seguras
+   ./generate-secrets.sh
+   ```
+
+2. **Editar .env.production**:
+   ```env
+   # CAMBIAR ESTAS VARIABLES CRÍTICAS:
+   NEXTAUTH_URL=https://tu-dominio-real.com
+   NEXTAUTH_SECRET=nueva-clave-generada-con-openssl
+   OPENAI_API_KEY=tu_clave_real_de_openai
+   
+   # Resto de APIs con valores reales
+   CHATWOOT_TOKEN=tu_token_real
+   CHATWOOT_URL=https://tu-instancia-chatwoot.com
+   N8N_WEBHOOK_URL=https://tu-n8n.com/webhook/aurum-trades
+   MT5_CONNECTOR_URL=https://tu-mt5-connector.com
+   ```
+
+### Despliegue en EasyPanel
+
+**Guía completa**: Consulta [`DOCKER_DEPLOYMENT.md`](./DOCKER_DEPLOYMENT.md) para instrucciones detalladas.
+
+**Pasos rápidos**:
+1. Crear proyecto en EasyPanel
+2. Configurar App Service con GitHub source
+3. Seleccionar Dockerfile como método de build
+4. Configurar variables de entorno (marcar "Create .env file")
+5. Agregar dominio personalizado (Internal Port: 3000)
+6. Configurar Volume Mount: `/data` para persistencia de SQLite
+7. Deploy
+
+### Docker Local (Desarrollo)
+
+```bash
+# Construir imagen
+npm run docker:build
+
+# Ejecutar contenedor
+npm run docker:run
+
+# La aplicación estará en http://localhost:3000
+```
+
 ## 🏗️ Estructura del Proyecto
 
 ```
@@ -148,6 +210,7 @@ aurum-invest-station/
 ├── src/
 │   ├── app/                    # Next.js App Router
 │   │   ├── api/               # API endpoints
+│   │   │   └── health/        # Health check endpoint
 │   │   ├── auth/              # Páginas de autenticación
 │   │   ├── dashboard/         # Dashboard principal
 │   │   ├── journal/           # Journal de trading
@@ -165,7 +228,13 @@ aurum-invest-station/
 │       └── index.ts           # Tipos TypeScript
 ├── prisma/
 │   └── schema.prisma          # Esquema de base de datos
-└── public/                    # Assets estáticos
+├── public/                    # Assets estáticos
+├── Dockerfile                 # Configuración Docker optimizada
+├── healthcheck.js            # Health check script
+├── .dockerignore             # Archivos excluidos de Docker
+├── .env.example              # Plantilla de variables de entorno
+├── generate-secrets.sh       # Script para generar claves seguras
+└── DOCKER_DEPLOYMENT.md      # Guía completa de despliegue
 ```
 
 ## 🔐 Autenticación y Roles

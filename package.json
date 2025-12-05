@@ -7,7 +7,17 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:deploy": "prisma migrate deploy",
+    "prisma:studio": "prisma studio",
+    "db:reset": "prisma migrate reset --force && prisma db push",
+    "docker:build": "docker build -t aurum-invest-station .",
+    "docker:run": "docker run -p 3000:3000 aurum-invest-station",
+    "health-check": "node healthcheck.js",
+    "test:build": "npm run build && echo 'Build successful'",
+    "clean": "rm -rf .next && npm run prisma:generate"
   },
   "dependencies": {
     "next": "14.2.33",

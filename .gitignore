@@ -887,11 +887,54 @@
 **/*.zip
 
 # ==============================================================================
-# PROJECT SPECIFIC
+# PROJECT SPECIFIC - AURUM INVEST STATION
 # ==============================================================================
 # Add your project-specific ignores here
-# workspace/
-# data/
-# uploads/
-# downloads/
+
+# Workspace and data directories
+workspace/
+data/
+uploads/
+downloads/
+
+# SQLite database files (development and production)
+*.db
+*.db-journal
+dev.db
+production.db
+
+# Prisma
+prisma/migrations/
+
+# Environment files (except examples)
+.env
+.env.local
+.env.production
+.env.development
+.env.test
+
+# Next.js specific
+.next/
+out/
+build/
+
+# Docker related
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Health check script
+healthcheck.js
+
+# EasyPanel deployment files
+deployment/
+.easypanel/
+
+# Test files
+coverage/
+.nyc_output/
+test-results/
+
+# Documentation build
+docs/_build/
 
