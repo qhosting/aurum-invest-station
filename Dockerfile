@@ -10,15 +10,15 @@ RUN apk add --no-cache libc6-compat
 # Stage 2: Dependencies
 FROM base AS deps
 # Instalar solo las dependencias de producción
-RUN npm ci --only=production && npm cache clean --force
+RUN npm install --only=production && npm cache clean --force
 
 # Stage 3: Builder
 FROM base AS builder
 WORKDIR /app
 
 # Instalar todas las dependencias
-COPY package.json package-lock.json ./
-RUN npm ci
+COPY package.json ./
+RUN npm install
 
 # Copiar código fuente
 COPY . .
@@ -69,4 +69,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
   CMD node -e "require('http').get('http://localhost:3000/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) }).on('error', () => process.exit(1))"
 
 # Comando de inicio
-CMD ["node", "server.js"]
+CMD ["npm", "start"]
