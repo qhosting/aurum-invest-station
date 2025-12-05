@@ -4,33 +4,41 @@ Plataforma profesional de trading algorítmico con análisis en tiempo real, jou
 
 ## 🚀 Características Principales
 
-- **Dashboard Profesional**: Métricas de trading, curva de capital y análisis de rendimiento
-- **Journal de Trading**: Registro de trades con IA coaching y análisis emocional
-- **Automatización MT5**: Integración con MetaTrader 5 via webhooks seguros
-- **Autenticación Avanzada**: NextAuth.js con roles (Trader, Super Admin)
-- **Análisis de Datos**: Charts interactivos con Recharts y métricas avanzadas
-- **Tema Oscuro**: Interfaz optimizada para traders profesionales
+- **Dashboard Profesional**: Métricas de trading, curva de capital y análisis de rendimiento en tiempo real
+- **Journal de Trading**: Registro manual y automático de trades con coaching de IA y análisis emocional
+- **Automatización MT5**: Webhook seguro para integración con MetaTrader 5
+- **Autenticación Avanzada**: NextAuth.js v4 con roles (TRADER, SUPER_ADMIN) y JWT
+- **Análisis de Datos**: Charts interactivos con Recharts, métricas PnL y risk-reward
+- **Tema Oscuro**: Interfaz profesional con paleta de colores AURUM (Gold/Dark Navy)
+- **Validación Robusta**: Zod schemas para todas las entradas de datos
+- **TypeScript Completo**: Tipado estricto en toda la aplicación
+- **Componentes Reutilizables**: Biblioteca completa de componentes Shadcn/UI
+- **Base de Datos Flexible**: Soporte para SQLite (desarrollo) y PostgreSQL (producción)
 
 ## 🛠️ Stack Tecnológico
 
 ### Frontend
-- **Next.js 14+** con App Router
-- **TypeScript** (strict mode)
-- **Tailwind CSS** para styling
-- **Shadcn/UI** + Radix UI components
-- **Recharts** para visualización de datos
-- **NextAuth.js** para autenticación
+- **Next.js 14.2.33** con App Router y Server Actions
+- **TypeScript 5** (strict mode)
+- **Tailwind CSS 3.4.1** para styling
+- **Shadcn/UI** + Radix UI components (Avatar, Dialog, Dropdown, etc.)
+- **Recharts 2.12.7** para gráficos interactivos
+- **Lucide React** para iconografía
+- **React Hook Form** para formularios
 
-### Backend
-- **PostgreSQL** como base de datos
-- **Prisma ORM** para manejo de datos
-- **Zod** para validación de datos
-- **bcrypt** para encriptación de contraseñas
+### Backend & Base de Datos
+- **Prisma ORM 5.18.0** para manejo de datos
+- **SQLite** para desarrollo local
+- **PostgreSQL** para producción
+- **NextAuth.js v4.24.8** para autenticación
+- **Zod 3.23.8** para validación de esquemas
+- **bcrypt 5.1.1** para hashing de contraseñas
 
-### Integración
-- **API Webhooks** para MetaTrader 5
-- **JWT** para sesiones
-- **RBAC** (Role-Based Access Control)
+### APIs & Integración
+- **Webhooks MT5**: API segura con X-API-KEY authentication
+- **JWT** para manejo de sesiones
+- **RBAC**: Sistema de roles con SUPER_ADMIN y TRADER
+- **Server Actions**: Mutations del lado del servidor sin API routes
 
 ## 📋 Requisitos Previos
 
@@ -52,47 +60,83 @@ npm install
 ```
 
 ### 3. Configurar Variables de Entorno
-Crea un archivo `.env.local` con las siguientes variables:
+
+El proyecto ya incluye un archivo `.env.local` de ejemplo. Para desarrollo rápido, puedes usar SQLite:
 
 ```env
-# Database
-DATABASE_URL="postgresql://user:password@localhost:5432/aurum_invest_station"
+# Database (SQLite para desarrollo local)
+DATABASE_URL="file:./dev.db"
 
-# NextAuth
+# NextAuth Configuration
 NEXTAUTH_URL="http://localhost:3000"
-NEXTAUTH_SECRET="your-secret-key-change-in-production"
+NEXTAUTH_SECRET="aurum-dev-secret-2025-key-[tu-secret-seguro-aqui]"
 
-# AI Configuration
-OPENAI_API_KEY="your-openai-api-key"
+# AI Configuration (Opcional - para uso futuro)
+OPENAI_API_KEY="sk-your-openai-key-here"
 CHATWOOT_TOKEN="your-chatwoot-token"
 CHATWOOT_URL="https://your-domain.chatwoot.com"
 
-# Automation
+# Automation (Opcional - para uso futuro)
 N8N_WEBHOOK_URL="http://localhost:5678/webhook"
 MT5_CONNECTOR_URL="http://localhost:8080"
 
-# Email Configuration
+# Email Configuration (Opcional - para uso futuro)
 SMTP_HOST="smtp.gmail.com"
 SMTP_PORT="587"
 SMTP_USER="your-email@gmail.com"
 SMTP_PASSWORD="your-app-password"
 ```
 
+**Para producción**, cambia a PostgreSQL:
+```env
+DATABASE_URL="postgresql://user:password@localhost:5432/aurum_invest_station"
+```
+
 ### 4. Configurar la Base de Datos
+
+#### Opción A: SQLite (Desarrollo Rápido)
+```bash
+# Generar cliente Prisma
+npx prisma generate
+
+# Crear base de datos y esquema
+npx prisma migrate dev --name init
+
+# Ver la base de datos en el navegador
+npx prisma studio
+```
+
+#### Opción B: PostgreSQL (Producción)
 ```bash
 # Generar cliente Prisma
 npx prisma generate
 
 # Ejecutar migraciones
-npx prisma db push
+npx prisma migrate dev --name init
 
-# (Opcional) Poblar con datos de prueba
-npx prisma db seed
+# Ver la base de datos en el navegador
+npx prisma studio
 ```
 
-### 5. Iniciar Servidor de Desarrollo
+**Nota**: El proyecto está configurado para SQLite por defecto. Para cambiar a PostgreSQL, actualiza el `DATABASE_URL` en `.env.local` y ejecuta las migraciones.
+
+### 5. Scripts Disponibles
+
 ```bash
+# Servidor de desarrollo
 npm run dev
+
+# Construir para producción
+npm run build
+
+# Iniciar servidor de producción
+npm start
+
+# Linting del código
+npm run lint
+
+# Verificar configuración
+node test-setup.js
 ```
 
 La aplicación estará disponible en [http://localhost:3000](http://localhost:3000)
