@@ -895,3 +895,19 @@
 # uploads/
 # downloads/
 
+# ==============================================================================
+# DOCKER DEPLOYMENT FILES (Allow these files for EasyPanel)
+# ==============================================================================
+# Allow Dockerfile for deployment
+!Dockerfile
+!Dockerfile.*
+!docker-compose.yml
+
+# Allow .dockerignore for build optimization
+!.dockerignore
+
+# Allow environment templates (not actual .env files with secrets)
+!.env.production
+!.env.example
+!.env.template
+
