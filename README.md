@@ -25,6 +25,9 @@ A professional multi-tenant trading dashboard with AI coaching integration, perf
 - **TypeScript** - Full type safety throughout the application
 - **Zod Validation** - Robust data validation and error handling
 - **Docker Ready** - Optimized for EasyPanel deployment
+- **🤖 Automated Setup** - Zero-configuration deployment with pre-configured users and sample data
+- **🔐 Auto-Generated Credentials** - Production-ready admin and trader accounts
+- **📊 Sample Data** - Pre-populated trading history and performance metrics
 
 ### AI Integration
 - **Chatwoot Integration** - AI coaching and emotional analysis
@@ -115,6 +118,15 @@ Visit `http://localhost:3000` to access the application.
 
 ### EasyPanel Deployment
 
+**🎯 AUTOMATED DEPLOYMENT - Zero Configuration Required!**
+
+The Docker setup includes automatic:
+- ✅ Database migrations
+- ✅ Super admin user creation
+- ✅ Demo trader account setup
+- ✅ Sample trading data generation
+- ✅ Health checks and monitoring
+
 1. **Build the Docker image**
    ```bash
    docker build -t aurum-invest-station .
@@ -122,9 +134,18 @@ Visit `http://localhost:3000` to access the application.
 
 2. **Deploy to EasyPanel**
    - Upload the built image
-   - Set environment variables
-   - Configure domain and SSL
-   - Set up PostgreSQL database
+   - Set environment variables from `.env.example`
+   - Configure domain: `auruminvest.mx`
+   - The system will automatically create all required users and data
+
+**🚀 Quick Start Command:**
+```bash
+docker-compose up -d
+```
+
+**Access immediately with:**
+- **Super Admin**: admin@auruminvest.mx / AURUM2024!SuperAdmin
+- **Trader Demo**: trader@auruminvest.mx / AURUM2024!Trader
 
 ## 🔧 Configuration
 
@@ -153,11 +174,27 @@ The application supports role-based authentication:
 - **TRADER**: Standard trader access
 - **ADMIN**: Administrative privileges
 
-### Demo Credentials
+### 🚀 AUTOMATED SETUP - AUTO-GENERATED CREDENTIALS
+
+**The application includes automatic database seeding with pre-configured users:**
+
+#### 👑 Super Administrator
 ```
-Email: trader@demo.com
-Password: demo123
+Email: admin@auruminvest.mx
+Password: AURUM2024!SuperAdmin
+Role: ADMIN
+Access: Full administrative privileges
 ```
+
+#### 👤 Trader Demo User
+```
+Email: trader@auruminvest.mx
+Password: AURUM2024!Trader
+Role: TRADER
+Access: Standard trading dashboard with sample data
+```
+
+**⚠️ IMPORTANT: Change these passwords after your first login for security!**
 
 ## 📊 Trading Features
 
