@@ -4,13 +4,14 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { prisma } from "./prisma"
 import bcrypt from "bcryptjs"
 import { z } from "zod"
+import type { NextAuthOptions } from "next-auth"
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email format"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 })
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
+export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
   providers: [
@@ -74,3 +75,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     error: "/auth/error",
   },
 })
+
+// Export handlers for NextAuth v4
+export const { handlers, signIn, signOut, auth } = NextAuth(authOptions)
+
+export default NextAuth(authOptions)
