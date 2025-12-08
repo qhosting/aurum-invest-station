@@ -1,0 +1,5 @@
+# Robots.txt for AURUM INVEST STATION
+User-agent: *
+Allow: /
+
+Sitemap: https://auruminvest.mx/sitemap.xml

@@ -1,0 +1,2 @@
+# This file keeps the public directory in Git and Docker context
+# Next.js uses this directory for static assets
