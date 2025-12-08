@@ -1,0 +1,120 @@
+Commit: 🚀 Force EasyPanel update: Include postinstall=false and ignore-scripts=true fixes 
+##########################################
+### Download Github Archive Started...
+### Mon, 08 Dec 2025 04:21:44 GMT
+##########################################
+
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.76kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:18-alpine
+#2 DONE 0.5s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [internal] load build context
+#4 DONE 0.0s
+
+#5 [base 1/1] FROM docker.io/library/node:18-alpine@sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e
+#5 resolve docker.io/library/node:18-alpine@sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e 0.1s done
+#5 CACHED
+
+#4 [internal] load build context
+#4 transferring context: 349.75kB 0.0s done
+#4 DONE 0.1s
+
+#6 [builder 1/5] WORKDIR /app
+#6 DONE 0.1s
+
+#7 [deps 1/4] RUN apk add --no-cache libc6-compat
+#7 ...
+
+#8 [runner  2/14] RUN addgroup --system --gid 1001 nodejs
+#8 DONE 0.2s
+
+#7 [deps 1/4] RUN apk add --no-cache libc6-compat
+#7 0.370 fetch https://dl-cdn.alpinelinux.org/alpine/v3.21/main/x86_64/APKINDEX.tar.gz
+#7 ...
+
+#9 [runner  3/14] RUN adduser --system --uid 1001 nextjs
+#9 DONE 0.3s
+
+#7 [deps 1/4] RUN apk add --no-cache libc6-compat
+#7 0.680 fetch https://dl-cdn.alpinelinux.org/alpine/v3.21/community/x86_64/APKINDEX.tar.gz
+#7 1.477 (1/3) Installing musl-obstack (1.2.3-r2)
+#7 1.490 (2/3) Installing libucontext (1.3.2-r0)
+#7 1.497 (3/3) Installing gcompat (1.1.0-r4)
+#7 1.507 OK: 10 MiB in 20 packages
+#7 DONE 1.7s
+
+#10 [deps 2/4] WORKDIR /app
+#10 DONE 0.1s
+
+#11 [deps 3/4] COPY package*.json ./
+#11 DONE 0.1s
+
+#12 [deps 4/4] RUN npm ci --only=production --ignore-scripts
+#12 0.469 npm warn config only Use `--omit=dev` to omit dev dependencies from the install.
+#12 1.665 npm error code EUSAGE
+#12 1.665 npm error
+#12 1.665 npm error The `npm ci` command can only install with an existing package-lock.json or
+#12 1.665 npm error npm-shrinkwrap.json with lockfileVersion >= 1. Run an install with npm@5 or
+#12 1.665 npm error later to generate a package-lock.json file, then try again.
+#12 1.665 npm error
+#12 1.665 npm error Clean install a project
+#12 1.665 npm error
+#12 1.665 npm error Usage:
+#12 1.665 npm error npm ci
+#12 1.665 npm error
+#12 1.665 npm error Options:
+#12 1.665 npm error [--install-strategy <hoisted|nested|shallow|linked>] [--legacy-bundling]
+#12 1.665 npm error [--global-style] [--omit <dev|optional|peer> [--omit <dev|optional|peer> ...]]
+#12 1.665 npm error [--include <prod|dev|optional|peer> [--include <prod|dev|optional|peer> ...]]
+#12 1.665 npm error [--strict-peer-deps] [--foreground-scripts] [--ignore-scripts] [--no-audit]
+#12 1.665 npm error [--no-bin-links] [--no-fund] [--dry-run]
+#12 1.665 npm error [-w|--workspace <workspace-name> [-w|--workspace <workspace-name> ...]]
+#12 1.665 npm error [-ws|--workspaces] [--include-workspace-root] [--install-links]
+#12 1.665 npm error
+#12 1.665 npm error aliases: clean-install, ic, install-clean, isntall-clean
+#12 1.665 npm error
+#12 1.665 npm error Run "npm help ci" for more info
+#12 1.668 npm error A complete log of this run can be found in: /root/.npm/_logs/2025-12-08T04_21_49_207Z-debug-0.log
+#12 ERROR: process "/bin/sh -c npm ci --only=production --ignore-scripts" did not complete successfully: exit code: 1
+------
+ > [deps 4/4] RUN npm ci --only=production --ignore-scripts:
+1.665 npm error [--include <prod|dev|optional|peer> [--include <prod|dev|optional|peer> ...]]
+1.665 npm error [--strict-peer-deps] [--foreground-scripts] [--ignore-scripts] [--no-audit]
+1.665 npm error [--no-bin-links] [--no-fund] [--dry-run]
+1.665 npm error [-w|--workspace <workspace-name> [-w|--workspace <workspace-name> ...]]
+1.665 npm error [-ws|--workspaces] [--include-workspace-root] [--install-links]
+1.665 npm error
+1.665 npm error aliases: clean-install, ic, install-clean, isntall-clean
+1.665 npm error
+1.665 npm error Run "npm help ci" for more info
+1.668 npm error A complete log of this run can be found in: /root/.npm/_logs/2025-12-08T04_21_49_207Z-debug-0.log
+------
+
+ 3 warnings found (use docker --debug to expand):
+ - LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 34)
+ - LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 63)
+ - LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 64)
+Dockerfile:12
+--------------------
+  10 |     COPY package*.json ./
+  11 |     # Install production dependencies only
+  12 | >>> RUN npm ci --only=production --ignore-scripts
+  13 |     
+  14 |     # Rebuild the source code only when needed
+--------------------
+ERROR: failed to build: failed to solve: process "/bin/sh -c npm ci --only=production --ignore-scripts" did not complete successfully: exit code: 1
+##########################################
+### Error
+### Mon, 08 Dec 2025 04:21:50 GMT
+##########################################
+
+Command failed with exit code 1: docker buildx build --network host -f /etc/easypanel/projects/qhosting/aurum-station/code/Dockerfile -t easypanel/qhosting/aurum-station --label 'keep=true' --no-cache --build-arg 'DATABASE_URL=postgresql://postgres:postgres@postgres:5432/aurum_invest_station' --build-arg 'NEXTAUTH_SECRET=lmM3csYY5lO99PgS/2EKso34xZtoSy/U6GuhvRWgWAM=' --build-arg 'NEXTAUTH_URL=https://auruminvest.mx' --build-arg 'NEXT_PUBLIC_CHATWOOT_BASE_URL=https://chat.auruminvest.mx' --build-arg 'NEXT_PUBLIC_CHATWOOT_TOKEN=tu_token_aqui' --build-arg 'NODE_ENV=production' --build-arg 'PORT=3000' --build-arg 'CHATWOOT_BASE_URL=https://chat.qhosting.net' --build-arg 'GIT_SHA=7f9903085a76b006652828a70f2858c277f0bc78' /etc/easypanel/projects/qhosting/aurum-station/code/
