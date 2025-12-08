@@ -21,6 +21,13 @@ COPY --from=deps /app/node_modules ./node_modules
 # Copy all source files including prisma
 COPY . .
 
+# Fix imports for Docker build environment
+RUN node fix-imports.js
+
+# Set Node.js path resolution environment variables for Docker
+ENV NODE_PATH=/app/node_modules:/app/src
+ENV TS_NODE_TRANSPILE_ONLY=1
+
 # Generate Prisma client explicitly
 RUN npx prisma generate
 
