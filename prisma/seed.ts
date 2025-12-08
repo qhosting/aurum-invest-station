@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, TradeType, TradeStatus } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
@@ -71,18 +71,32 @@ async function main() {
   console.log('📊 Datos de ejemplo de JournalMetric creados');
 
   // Crear algunos trades de ejemplo
-  const sampleTrades = [
+  const sampleTrades: Array<{
+    userId: string;
+    symbol: string;
+    type: TradeType;
+    entryPrice: number;
+    exitPrice: number | null;
+    sl: number;
+    tp: number;
+    lotSize: number;
+    profit: number | null;
+    status: TradeStatus;
+    setup: string;
+    openedAt: Date;
+    closedAt: Date | null;
+  }> = [
     {
       userId: adminUser.id,
       symbol: 'EURUSD',
-      type: 'BUY',
+      type: TradeType.BUY,
       entryPrice: 1.0850,
       exitPrice: 1.0920,
       sl: 1.0800,
       tp: 1.0950,
       lotSize: 0.1,
       profit: 70.00,
-      status: 'CLOSED',
+      status: TradeStatus.CLOSED,
       setup: 'AURUM V33',
       openedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
       closedAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
@@ -90,14 +104,14 @@ async function main() {
     {
       userId: adminUser.id,
       symbol: 'GBPUSD',
-      type: 'SELL',
+      type: TradeType.SELL,
       entryPrice: 1.2650,
       exitPrice: 1.2580,
       sl: 1.2700,
       tp: 1.2550,
       lotSize: 0.05,
       profit: 35.00,
-      status: 'CLOSED',
+      status: TradeStatus.CLOSED,
       setup: 'AURUM Scalping',
       openedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
       closedAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
@@ -105,14 +119,14 @@ async function main() {
     {
       userId: adminUser.id,
       symbol: 'XAUUSD',
-      type: 'BUY',
+      type: TradeType.BUY,
       entryPrice: 2040.50,
       exitPrice: null,
       sl: 2030.00,
       tp: 2060.00,
       lotSize: 0.01,
       profit: null,
-      status: 'OPEN',
+      status: TradeStatus.OPEN,
       setup: 'AURUM Gold Strategy',
       openedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
       closedAt: null,
