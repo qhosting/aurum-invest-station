@@ -22,7 +22,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Fix imports for Docker build environment
-RUN node fix-direct.js
+RUN ls -la src/ && ls -la src/lib/ && node fix-radical.js && echo "=== Checking created files ===" && ls -la src/app/lib/ && ls -la src/components/lib/
 
 # Set Node.js path resolution environment variables for Docker
 ENV NODE_PATH=/app/node_modules:/app/src
