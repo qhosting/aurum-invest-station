@@ -42,29 +42,24 @@ ENV NODE_ENV production
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-COPY --from=builder /app/public ./public
-
-# Set the correct permission for prerender cache
-RUN mkdir .next
-RUN chown nextjs:nodejs .next
-
-# Automatically leverage output traces to reduce image size
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
-# Copy all necessary files from builder
+# Copy all necessary files from builder first
 COPY --from=builder /app ./
 
 # Install tsx for running the seed script
 RUN npm install -g tsx
 
+# Set the correct permission for prerender cache
+RUN mkdir .next
+RUN chown -R nextjs:nodejs /app
+
+# Make docker-entrypoint.sh executable
 USER root
-RUN chmod +x docker-entrypoint.sh
+RUN chmod +x /app/docker-entrypoint.sh
 USER nextjs
 
 EXPOSE 3000
 ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
 
-# Use docker-entrypoint.sh as the startup script
-CMD ["./docker-entrypoint.sh", "npm", "start"]
+# Use absolute path for docker-entrypoint.sh
+CMD ["/app/docker-entrypoint.sh", "npm", "start"]
