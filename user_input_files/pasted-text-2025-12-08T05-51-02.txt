@@ -1,0 +1,248 @@
+Commit: debug: Add debug script to check Docker build environment
+
+- Temporarily replace fix-ultra.js with debug-docker.js
+- This will help us understand why lib files aren't being created
+- Check src directory structure and file existence 
+##########################################
+### Download Github Archive Started...
+### Mon, 08 Dec 2025 05:48:20 GMT
+##########################################
+
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.94kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:18-alpine
+#2 DONE 0.3s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [builder 1/6] WORKDIR /app
+#4 CACHED
+
+#5 [base 1/1] FROM docker.io/library/node:18-alpine@sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e
+#5 resolve docker.io/library/node:18-alpine@sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e 0.0s done
+#5 CACHED
+
+#6 [internal] load build context
+#6 transferring context: 391.27kB 0.0s done
+#6 DONE 0.1s
+
+#7 [deps 1/4] RUN apk add --no-cache libc6-compat
+#7 0.147 fetch https://dl-cdn.alpinelinux.org/alpine/v3.21/main/x86_64/APKINDEX.tar.gz
+#7 ...
+
+#8 [runner  2/14] RUN addgroup --system --gid 1001 nodejs
+#8 DONE 0.2s
+
+#7 [deps 1/4] RUN apk add --no-cache libc6-compat
+#7 0.323 fetch https://dl-cdn.alpinelinux.org/alpine/v3.21/community/x86_64/APKINDEX.tar.gz
+#7 ...
+
+#9 [runner  3/14] RUN adduser --system --uid 1001 nextjs
+#9 DONE 0.2s
+
+#7 [deps 1/4] RUN apk add --no-cache libc6-compat
+#7 1.111 (1/3) Installing musl-obstack (1.2.3-r2)
+#7 1.126 (2/3) Installing libucontext (1.3.2-r0)
+#7 1.136 (3/3) Installing gcompat (1.1.0-r4)
+#7 1.154 OK: 10 MiB in 20 packages
+#7 DONE 1.5s
+
+#10 [deps 2/4] WORKDIR /app
+#10 DONE 0.1s
+
+#11 [deps 3/4] COPY package*.json ./
+#11 DONE 0.2s
+
+#12 [deps 4/4] RUN npm install --ignore-scripts
+#12 42.79 npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+#12 45.36 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+#12 46.88 npm warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
+#12 47.43 npm warn deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead
+#12 49.00 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+#12 53.52 npm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+#12 76.87 
+#12 76.87 added 562 packages, and audited 563 packages in 1m
+#12 76.87 
+#12 76.87 165 packages are looking for funding
+#12 76.87   run `npm fund` for details
+#12 77.10 
+#12 77.10 7 vulnerabilities (3 low, 3 high, 1 critical)
+#12 77.10 
+#12 77.10 To address issues that do not require attention, run:
+#12 77.10   npm audit fix
+#12 77.10 
+#12 77.10 To address all issues (including breaking changes), run:
+#12 77.10   npm audit fix --force
+#12 77.10 
+#12 77.10 Run `npm audit` for details.
+#12 77.10 npm notice
+#12 77.10 npm notice New major version of npm available! 10.8.2 -> 11.6.4
+#12 77.10 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.6.4
+#12 77.10 npm notice To update run: npm install -g npm@11.6.4
+#12 77.10 npm notice
+#12 DONE 78.0s
+
+#13 [builder 2/6] COPY --from=deps /app/node_modules ./node_modules
+#13 DONE 10.4s
+
+#14 [builder 3/6] COPY . .
+#14 DONE 0.5s
+
+#15 [builder 4/6] RUN node debug-docker.js
+#15 0.229 🔍 Docker Build Debug Script
+#15 0.229 =====================================
+#15 0.229 📍 Current working directory: /app
+#15 0.229 
+#15 0.229 📁 Checking src directory...
+#15 0.230 ✅ src directory exists
+#15 0.234 📋 src directory contents: [ 'app', 'components', 'types' ]
+#15 0.234 ❌ src/lib directory does NOT exist
+#15 0.234 ✅ src/app directory exists
+#15 0.234 📋 src/app contents: [ 'api', 'app', 'auth', 'globals.css', 'layout.tsx', 'page.tsx' ]
+#15 0.236 ❌ src/app/lib directory does NOT exist
+#15 0.236 ✅ src/components directory exists
+#15 0.236 📋 src/components contents: [ 'ChatwootWidget.tsx', 'dashboard', 'providers', 'ui' ]
+#15 0.236 ❌ src/components/lib directory does NOT exist
+#15 0.236 
+#15 0.236 🔧 Checking fix-ultra.js...
+#15 0.236 ✅ fix-ultra.js exists
+#15 0.237 📊 fix-ultra.js size: 7433 bytes
+#15 0.238 📅 fix-ultra.js modified: 2025-12-07T21:47:12.000Z
+#15 0.238 
+#15 0.238 🚫 Checking .dockerignore...
+#15 0.238 ℹ️ .dockerignore does not exist (this is normal)
+#15 0.238 
+#15 0.238 🏁 Debug script completed.
+#15 DONE 0.3s
+
+#16 [builder 5/6] RUN npx prisma generate
+#16 2.309 prisma:warn Prisma failed to detect the libssl/openssl version to use, and may not work as expected. Defaulting to "openssl-1.1.x".
+#16 2.309 Please manually install OpenSSL and try installing Prisma again.
+#16 3.605 Prisma schema loaded from prisma/schema.prisma
+#16 3.649 prisma:warn Prisma failed to detect the libssl/openssl version to use, and may not work as expected. Defaulting to "openssl-1.1.x".
+#16 3.649 Please manually install OpenSSL and try installing Prisma again.
+#16 5.927 
+#16 5.927 ✔ Generated Prisma Client (v6.19.0) to ./node_modules/@prisma/client in 319ms
+#16 5.927 
+#16 5.927 Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+#16 5.927 
+#16 5.927 Tip: Curious about the SQL queries Prisma ORM generates? Optimize helps you enhance your visibility: https://pris.ly/tip-2-optimize
+#16 5.927 
+#16 5.927 
+#16 5.927 warn Versions of prisma@5.22.0 and @prisma/client@6.19.0 don't match.
+#16 5.927 This might lead to unexpected behavior.
+#16 5.927 Please make sure they have the same version.
+#16 6.159 npm notice
+#16 6.159 npm notice New major version of npm available! 10.8.2 -> 11.6.4
+#16 6.159 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.6.4
+#16 6.159 npm notice To update run: npm install -g npm@11.6.4
+#16 6.159 npm notice
+#16 DONE 6.2s
+
+#17 [builder 6/6] RUN npm run build
+#17 0.474 
+#17 0.474 > aurum-invest-station@1.0.0 build
+#17 0.474 > prisma generate && next build
+#17 0.474 
+#17 1.498 prisma:warn Prisma failed to detect the libssl/openssl version to use, and may not work as expected. Defaulting to "openssl-1.1.x".
+#17 1.498 Please manually install OpenSSL and try installing Prisma again.
+#17 1.760 Prisma schema loaded from prisma/schema.prisma
+#17 1.794 prisma:warn Prisma failed to detect the libssl/openssl version to use, and may not work as expected. Defaulting to "openssl-1.1.x".
+#17 1.794 Please manually install OpenSSL and try installing Prisma again.
+#17 2.852 
+#17 2.852 ✔ Generated Prisma Client (v6.19.0) to ./node_modules/@prisma/client in 310ms
+#17 2.852 
+#17 2.852 Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+#17 2.852 
+#17 2.852 Tip: Want to react to database changes in your app as they happen? Discover how with Pulse: https://pris.ly/tip-1-pulse
+#17 2.852 
+#17 2.852 
+#17 2.852 warn Versions of prisma@5.22.0 and @prisma/client@6.19.0 don't match.
+#17 2.852 This might lead to unexpected behavior.
+#17 2.852 Please make sure they have the same version.
+#17 4.366 Attention: Next.js now collects completely anonymous telemetry regarding usage.
+#17 4.367 This information is used to shape Next.js' roadmap and prioritize features.
+#17 4.367 You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+#17 4.367 https://nextjs.org/telemetry
+#17 4.367 
+#17 4.500   ▲ Next.js 14.2.18
+#17 4.501 
+#17 4.626    Creating an optimized production build ...
+#17 23.30 Failed to compile.
+#17 23.30 
+#17 23.30 ./src/app/auth/signin/page.tsx
+#17 23.30 Module not found: Can't resolve '@/lib/validations'
+#17 23.30 
+#17 23.30 https://nextjs.org/docs/messages/module-not-found
+#17 23.30 
+#17 23.30 ./src/app/auth/signup/page.tsx
+#17 23.30 Module not found: Can't resolve '@/lib/validations'
+#17 23.30 
+#17 23.30 https://nextjs.org/docs/messages/module-not-found
+#17 23.30 
+#17 23.30 ./src/components/ui/alert.tsx
+#17 23.30 Module not found: Can't resolve '@/lib/utils'
+#17 23.30 
+#17 23.30 https://nextjs.org/docs/messages/module-not-found
+#17 23.30 
+#17 23.30 Import trace for requested module:
+#17 23.30 ./src/app/auth/signup/page.tsx
+#17 23.30 
+#17 23.30 ./src/components/ui/avatar.tsx
+#17 23.30 Module not found: Can't resolve '@/lib/utils'
+#17 23.30 
+#17 23.30 https://nextjs.org/docs/messages/module-not-found
+#17 23.30 
+#17 23.30 Import trace for requested module:
+#17 23.30 ./src/components/dashboard/dashboard-header.tsx
+#17 23.30 
+#17 23.30 ./src/components/ui/badge.tsx
+#17 23.30 Module not found: Can't resolve '@/lib/utils'
+#17 23.30 
+#17 23.30 https://nextjs.org/docs/messages/module-not-found
+#17 23.30 
+#17 23.30 Import trace for requested module:
+#17 23.30 ./src/components/dashboard/recent-trades-table.tsx
+#17 23.30 
+#17 23.31 
+#17 23.31 > Build failed because of webpack errors
+#17 ERROR: process "/bin/sh -c npm run build" did not complete successfully: exit code: 1
+------
+ > [builder 6/6] RUN npm run build:
+23.30 ./src/components/ui/badge.tsx
+23.30 Module not found: Can't resolve '@/lib/utils'
+23.30 
+23.30 https://nextjs.org/docs/messages/module-not-found
+23.30 
+23.30 Import trace for requested module:
+23.30 ./src/components/dashboard/recent-trades-table.tsx
+23.30 
+23.31 
+23.31 > Build failed because of webpack errors
+------
+
+ 3 warnings found (use docker --debug to expand):
+ - LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 41)
+ - LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 70)
+ - LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 71)
+Dockerfile:35
+--------------------
+  33 |     
+  34 |     # Build the application
+  35 | >>> RUN npm run build
+  36 |     
+  37 |     # Production image, copy all the files and run next
+--------------------
+ERROR: failed to build: failed to solve: process "/bin/sh -c npm run build" did not complete successfully: exit code: 1
+##########################################
+### Error
+### Mon, 08 Dec 2025 05:50:29 GMT
+##########################################
+
+Command failed with exit code 1: docker buildx build --network host -f /etc/easypanel/projects/qhosting/aurum-station/code/Dockerfile -t easypanel/qhosting/aurum-station --label 'keep=true' --no-cache --build-arg 'DATABASE_URL=postgresql://postgres:postgres@postgres:5432/aurum_invest_station' --build-arg 'NEXTAUTH_SECRET=lmM3csYY5lO99PgS/2EKso34xZtoSy/U6GuhvRWgWAM=' --build-arg 'NEXTAUTH_URL=https://auruminvest.mx' --build-arg 'NEXT_PUBLIC_CHATWOOT_BASE_URL=https://chat.auruminvest.mx' --build-arg 'NEXT_PUBLIC_CHATWOOT_TOKEN=tu_token_aqui' --build-arg 'NODE_ENV=production' --build-arg 'PORT=3000' --build-arg 'CHATWOOT_BASE_URL=https://chat.qhosting.net' --build-arg 'GIT_SHA=a053b43e0fe49cc99da69c4ca44e620d6ef1723d' /etc/easypanel/projects/qhosting/aurum-station/code/
