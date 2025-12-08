@@ -12,6 +12,11 @@ const nextConfig = {
       ...config.resolve.fallback,
       fs: false,
     }
+    // Ensure path resolution works in Docker
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@': require('path').join(__dirname, 'src'),
+    }
     return config
   },
 }
