@@ -52,14 +52,18 @@ RUN npm install -g tsx
 RUN mkdir -p .next || true
 RUN chown -R nextjs:nodejs /app
 
-# Make docker-entrypoint.sh executable
+# Make docker-entrypoint.sh executable with extensive validation
 USER root
-RUN chmod +x /app/docker-entrypoint.sh
+RUN echo "🔍 Validando docker-entrypoint.sh..." && \
+    ls -la /app/docker-entrypoint.sh && \
+    chmod +x /app/docker-entrypoint.sh && \
+    echo "✅ Permisos aplicados: $(ls -la /app/docker-entrypoint.sh)" && \
+    file /app/docker-entrypoint.sh
 USER nextjs
 
 EXPOSE 3000
 ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
 
-# Use absolute path for docker-entrypoint.sh
-CMD ["/app/docker-entrypoint.sh", "npm", "start"]
+# Use absolute path for docker-entrypoint.sh with validation
+CMD ["sh", "-c", "echo '🚀 Iniciando contenedor...' && ls -la /app/docker-entrypoint.sh && /app/docker-entrypoint.sh npm start"]
