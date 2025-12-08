@@ -21,8 +21,7 @@ COPY --from=deps /app/node_modules ./node_modules
 # Copy all source files including prisma
 COPY . .
 
-# Fix imports for Docker build environment
-RUN node fix-ultra.js
+# No fix needed - using original files from repository
 
 # Set Node.js path resolution environment variables for Docker
 ENV NODE_PATH=/app/node_modules:/app/src
