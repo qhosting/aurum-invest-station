@@ -1,0 +1,83 @@
+#16 [builder 5/5] RUN npm run build
+#16 0.445 npm error config prefix cannot be changed from project config: /app/.npmrc.
+#16 0.538 
+#16 0.538 > aurum-invest-station@1.0.0 build
+#16 0.538 > prisma generate && next build
+#16 0.538 
+#16 2.710 warn The configuration property `package.json#prisma` is deprecated and will be removed in Prisma 7. Please migrate to a Prisma config file (e.g., `prisma.config.ts`).
+#16 2.710 For more information, see: https://pris.ly/prisma-config
+#16 2.710 
+#16 3.140 Prisma schema loaded from prisma/schema.prisma
+#16 4.002 
+#16 4.002 ✔ Generated Prisma Client (v6.19.0) to ./node_modules/@prisma/client in 265ms
+#16 4.002 
+#16 4.002 Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+#16 4.002 
+#16 4.002 Tip: Interested in query caching in just a few lines of code? Try Accelerate today! https://pris.ly/tip-3-accelerate
+#16 4.002 
+#16 4.002 ┌─────────────────────────────────────────────────────────┐
+#16 4.002 │  Update available 6.19.0 -> 7.1.0                       │
+#16 4.002 │                                                         │
+#16 4.002 │  This is a major update - please follow the guide at    │
+#16 4.002 │  https://pris.ly/d/major-version-upgrade                │
+#16 4.002 │                                                         │
+#16 4.002 │  Run the following to update                            │
+#16 4.002 │    npm i --save-dev prisma@latest                       │
+#16 4.002 │    npm i @prisma/client@latest                          │
+#16 4.002 └─────────────────────────────────────────────────────────┘
+#16 5.473 Attention: Next.js now collects completely anonymous telemetry regarding usage.
+#16 5.473 This information is used to shape Next.js' roadmap and prioritize features.
+#16 5.473 You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+#16 5.473 https://nextjs.org/telemetry
+#16 5.473 
+#16 5.623   ▲ Next.js 14.2.18
+#16 5.623 
+#16 5.750    Creating an optimized production build ...
+#16 41.98  ✓ Compiled successfully
+#16 41.98    Linting and checking validity of types ...
+#16 56.00 Failed to compile.
+#16 56.00 
+#16 56.00 ./src/lib/auth.ts:14:3
+#16 56.00 Type error: Type 'import("/app/node_modules/@auth/prisma-adapter/node_modules/@auth/core/adapters").Adapter' is not assignable to type 'import("/app/node_modules/next-auth/adapters").Adapter'.
+#16 56.00   Types of property 'getUser' are incompatible.
+#16 56.00     Type '((id: string) => import("/app/node_modules/@auth/prisma-adapter/node_modules/@auth/core/types").Awaitable<import("/app/node_modules/@auth/prisma-adapter/node_modules/@auth/core/adapters").AdapterUser | null>) | undefined' is not assignable to type '((id: string) => import("/app/node_modules/next-auth/core/types").Awaitable<import("/app/node_modules/next-auth/adapters").AdapterUser | null>) | undefined'.
+#16 56.00       Type '(id: string) => import("/app/node_modules/@auth/prisma-adapter/node_modules/@auth/core/types").Awaitable<import("/app/node_modules/@auth/prisma-adapter/node_modules/@auth/core/adapters").AdapterUser | null>' is not assignable to type '(id: string) => import("/app/node_modules/next-auth/core/types").Awaitable<import("/app/node_modules/next-auth/adapters").AdapterUser | null>'.
+#16 56.00         Type 'import("/app/node_modules/@auth/prisma-adapter/node_modules/@auth/core/types").Awaitable<import("/app/node_modules/@auth/prisma-adapter/node_modules/@auth/core/adapters").AdapterUser | null>' is not assignable to type 'import("/app/node_modules/next-auth/core/types").Awaitable<import("/app/node_modules/next-auth/adapters").AdapterUser | null>'.
+#16 56.00           Type 'AdapterUser' is not assignable to type 'Awaitable<AdapterUser | null>'.
+#16 56.00             Type 'AdapterUser' is missing the following properties from type 'AdapterUser': role, apiKey
+#16 56.00 
+#16 56.00   12 |
+#16 56.00   13 | export const { handlers, signIn, signOut, auth } = NextAuth({
+#16 56.00 > 14 |   adapter: PrismaAdapter(prisma),
+#16 56.00      |   ^
+#16 56.00   15 |   session: { strategy: "jwt" },
+#16 56.00   16 |   providers: [
+#16 56.00   17 |     Credentials({
+#16 ERROR: process "/bin/sh -c npm run build" did not complete successfully: exit code: 1
+------
+ > [builder 5/5] RUN npm run build:
+56.00           Type 'AdapterUser' is not assignable to type 'Awaitable<AdapterUser | null>'.
+56.00             Type 'AdapterUser' is missing the following properties from type 'AdapterUser': role, apiKey
+56.00 
+56.00   12 |
+56.00   13 | export const { handlers, signIn, signOut, auth } = NextAuth({
+56.00 > 14 |   adapter: PrismaAdapter(prisma),
+56.00      |   ^
+56.00   15 |   session: { strategy: "jwt" },
+56.00   16 |   providers: [
+56.00   17 |     Credentials({
+------
+
+ 3 warnings found (use docker --debug to expand):
+ - LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 40)
+ - LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 69)
+ - LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 70)
+Dockerfile:34
+--------------------
+  32 |     
+  33 |     # Build the application
+  34 | >>> RUN npm run build
+  35 |     
+  36 |     # Production image, copy all the files and run next
+--------------------
+ERROR: failed to build: failed to solve: process "/bin/sh -c npm run build" did not complete successfully: exit code: 1
