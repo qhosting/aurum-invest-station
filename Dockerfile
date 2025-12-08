@@ -9,7 +9,7 @@ WORKDIR /app
 # Copy only package files first
 COPY package*.json ./
 # Install production dependencies only
-RUN npm ci --only=production --ignore-scripts
+RUN npm install --only=production --ignore-scripts
 
 # Rebuild the source code only when needed
 FROM base AS builder
