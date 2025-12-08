@@ -1,6 +1,7 @@
 import { Suspense } from "react"
-import { auth } from "@/lib/auth"
+import { getServerSession } from "next-auth"
 import { redirect } from "next/navigation"
+import { authOptions } from "@/lib/auth"
 import { DashboardHeader } from "@/components/dashboard/dashboard-header"
 import { MetricsBar } from "@/components/dashboard/metrics-bar"
 import { EquityChart } from "@/components/dashboard/equity-chart"
@@ -8,7 +9,7 @@ import { RecentTradesTable } from "@/components/dashboard/recent-trades-table"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default async function DashboardPage() {
-  const session = await auth()
+  const session = await getServerSession(authOptions)
 
   if (!session?.user) {
     redirect("/auth/signin")
