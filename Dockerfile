@@ -49,7 +49,7 @@ COPY --from=builder /app ./
 RUN npm install -g tsx
 
 # Set the correct permission for prerender cache
-RUN mkdir .next
+RUN mkdir -p .next || true
 RUN chown -R nextjs:nodejs /app
 
 # Make docker-entrypoint.sh executable
