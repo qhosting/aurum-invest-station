@@ -62,7 +62,8 @@
     "typescript": "^5.7.2"
   },
   "prisma": {
-    "schema": "./prisma/schema.prisma"
+    "schema": "./prisma/schema.prisma",
+    "postinstall": false
   },
   "engines": {
     "node": ">=18.19.0"
