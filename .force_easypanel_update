@@ -1,0 +1,3 @@
+# Force EasyPanel Update
+# This file forces EasyPanel to use the latest commit with all fixes
+# Including: postinstall=false and ignore-scripts=true configurations
