@@ -52,11 +52,8 @@ RUN chown nextjs:nodejs .next
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Copy prisma and other necessary files
-COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/docker-entrypoint.sh ./docker-entrypoint.sh
+# Copy all necessary files from builder
+COPY --from=builder /app ./
 
 # Install tsx for running the seed script
 RUN npm install -g tsx
