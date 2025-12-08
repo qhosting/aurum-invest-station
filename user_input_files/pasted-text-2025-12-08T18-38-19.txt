@@ -1,0 +1,190 @@
+Commit: trigger: force deployment with NextAuth v4 fixes 
+##########################################
+### Download Github Archive Started...
+### Mon, 08 Dec 2025 18:32:29 GMT
+##########################################
+
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.94kB 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:18-alpine
+#2 DONE 0.3s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [base 1/1] FROM docker.io/library/node:18-alpine@sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e
+#4 resolve docker.io/library/node:18-alpine@sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e 0.0s done
+#4 CACHED
+
+#5 [builder 1/5] WORKDIR /app
+#5 CACHED
+
+#6 [internal] load build context
+#6 transferring context: 5.85kB 0.0s done
+#6 DONE 0.0s
+
+#7 [runner  2/14] RUN addgroup --system --gid 1001 nodejs
+#7 DONE 0.2s
+
+#8 [runner  3/14] RUN adduser --system --uid 1001 nextjs
+#8 DONE 0.2s
+
+#9 [deps 1/4] RUN apk add --no-cache libc6-compat
+#9 0.246 fetch https://dl-cdn.alpinelinux.org/alpine/v3.21/main/x86_64/APKINDEX.tar.gz
+#9 0.494 fetch https://dl-cdn.alpinelinux.org/alpine/v3.21/community/x86_64/APKINDEX.tar.gz
+#9 1.575 (1/3) Installing musl-obstack (1.2.3-r2)
+#9 1.588 (2/3) Installing libucontext (1.3.2-r0)
+#9 1.593 (3/3) Installing gcompat (1.1.0-r4)
+#9 1.614 OK: 10 MiB in 20 packages
+#9 DONE 2.2s
+
+#10 [deps 2/4] WORKDIR /app
+#10 DONE 0.1s
+
+#11 [deps 3/4] COPY package*.json ./
+#11 DONE 0.6s
+
+#12 [deps 4/4] RUN npm install --ignore-scripts
+#12 53.30 npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+#12 55.55 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+#12 56.82 npm warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
+#12 57.28 npm warn deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead
+#12 58.72 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+#12 62.98 npm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+#12 93.37 
+#12 93.37 added 578 packages, and audited 579 packages in 2m
+#12 93.37 
+#12 93.37 165 packages are looking for funding
+#12 93.37   run `npm fund` for details
+#12 93.60 
+#12 93.60 4 vulnerabilities (3 high, 1 critical)
+#12 93.60 
+#12 93.60 To address all issues (including breaking changes), run:
+#12 93.60   npm audit fix --force
+#12 93.60 
+#12 93.60 Run `npm audit` for details.
+#12 93.61 npm notice
+#12 93.61 npm notice New major version of npm available! 10.8.2 -> 11.6.4
+#12 93.61 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.6.4
+#12 93.61 npm notice To update run: npm install -g npm@11.6.4
+#12 93.61 npm notice
+#12 DONE 94.8s
+
+#13 [builder 2/5] COPY --from=deps /app/node_modules ./node_modules
+#13 DONE 17.1s
+
+#14 [builder 3/5] COPY . .
+#14 DONE 0.5s
+
+#15 [builder 4/5] RUN npx prisma generate
+#15 0.383 npm error config prefix cannot be changed from project config: /app/.npmrc.
+#15 3.295 warn The configuration property `package.json#prisma` is deprecated and will be removed in Prisma 7. Please migrate to a Prisma config file (e.g., `prisma.config.ts`).
+#15 3.295 For more information, see: https://pris.ly/prisma-config
+#15 3.295 
+#15 4.502 Prisma schema loaded from prisma/schema.prisma
+#15 5.276 
+#15 5.276 ✔ Generated Prisma Client (v6.19.0) to ./node_modules/@prisma/client in 229ms
+#15 5.276 
+#15 5.276 Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+#15 5.276 
+#15 5.276 Tip: Need your database queries to be 1000x faster? Accelerate offers you that and more: https://pris.ly/tip-2-accelerate
+#15 5.276 
+#15 5.332 npm notice
+#15 5.332 npm notice New major version of npm available! 10.8.2 -> 11.6.4
+#15 5.332 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.6.4
+#15 5.332 npm notice To update run: npm install -g npm@11.6.4
+#15 5.332 npm notice
+#15 DONE 5.4s
+
+#16 [builder 5/5] RUN npm run build
+#16 0.524 npm error config prefix cannot be changed from project config: /app/.npmrc.
+#16 0.632 
+#16 0.632 > aurum-invest-station@1.0.0 build
+#16 0.632 > prisma generate && next build
+#16 0.632 
+#16 2.432 warn The configuration property `package.json#prisma` is deprecated and will be removed in Prisma 7. Please migrate to a Prisma config file (e.g., `prisma.config.ts`).
+#16 2.432 For more information, see: https://pris.ly/prisma-config
+#16 2.432 
+#16 2.865 Prisma schema loaded from prisma/schema.prisma
+#16 3.671 ┌─────────────────────────────────────────────────────────┐
+#16 3.671 │  Update available 6.19.0 -> 7.1.0                       │
+#16 3.671 │                                                         │
+#16 3.671 │  This is a major update - please follow the guide at    │
+#16 3.671 │  https://pris.ly/d/major-version-upgrade                │
+#16 3.671 │                                                         │
+#16 3.671 │  Run the following to update                            │
+#16 3.671 │    npm i --save-dev prisma@latest                       │
+#16 3.671 │    npm i @prisma/client@latest                          │
+#16 3.671 └─────────────────────────────────────────────────────────┘
+#16 3.672 
+#16 3.672 ✔ Generated Prisma Client (v6.19.0) to ./node_modules/@prisma/client in 269ms
+#16 3.672 
+#16 3.672 Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+#16 3.672 
+#16 3.672 Tip: Need your database queries to be 1000x faster? Accelerate offers you that and more: https://pris.ly/tip-2-accelerate
+#16 3.672 
+#16 5.088 Attention: Next.js now collects completely anonymous telemetry regarding usage.
+#16 5.089 This information is used to shape Next.js' roadmap and prioritize features.
+#16 5.089 You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+#16 5.089 https://nextjs.org/telemetry
+#16 5.089 
+#16 5.219   ▲ Next.js 14.2.18
+#16 5.220 
+#16 5.348    Creating an optimized production build ...
+#16 28.04 Failed to compile.
+#16 28.04 
+#16 28.04 ./src/lib/auth.ts
+#16 28.04 Error: 
+#16 28.04   x Expected a semicolon
+#16 28.04     ,-[/app/src/lib/auth.ts:74:1]
+#16 28.04  74 |     signIn: "/auth/signin",
+#16 28.04  75 |     error: "/auth/error",
+#16 28.04  76 |   },
+#16 28.04  77 | })
+#16 28.04     :  ^
+#16 28.04  78 | 
+#16 28.04  79 | export default NextAuth(authOptions)
+#16 28.04     `----
+#16 28.04 
+#16 28.04 Caused by:
+#16 28.04     Syntax Error
+#16 28.04 
+#16 28.04 Import trace for requested module:
+#16 28.04 ./src/lib/auth.ts
+#16 28.04 ./src/app/page.tsx
+#16 28.04 
+#16 28.04 
+#16 28.04 > Build failed because of webpack errors
+#16 ERROR: process "/bin/sh -c npm run build" did not complete successfully: exit code: 1
+------
+ > [builder 5/5] RUN npm run build:
+28.04 
+28.04 Caused by:
+28.04     Syntax Error
+28.04 
+28.04 Import trace for requested module:
+28.04 ./src/lib/auth.ts
+28.04 ./src/app/page.tsx
+28.04 
+28.04 
+28.04 > Build failed because of webpack errors
+------
+
+ 3 warnings found (use docker --debug to expand):
+ - LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 40)
+ - LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 69)
+ - LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 70)
+Dockerfile:34
+--------------------
+  32 |     
+  33 |     # Build the application
+  34 | >>> RUN npm run build
+  35 |     
+  36 |     # Production image, copy all the files and run next
+--------------------
+ERROR: failed to build: failed to solve: process "/bin/sh -c npm run build" did not complete successfully: exit code: 1
