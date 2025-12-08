@@ -1,367 +1,215 @@
 # AURUM INVEST STATION
 
-A professional multi-tenant trading dashboard with AI coaching integration, performance analytics, and automated trade logging.
+**Multi-Tenant Trading Dashboard with AI Coaching Integration**
 
-![AURUM Invest Station](https://img.shields.io/badge/Status-Production%20Ready-brightgreen)
-![Next.js](https://img.shields.io/badge/Next.js-14.2-blue)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
-![Prisma](https://img.shields.io/badge/Prisma-5.18-2D3748)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-336791)
-![Docker](https://img.shields.io/badge/Docker-Ready-2496ED)
+Una plataforma completa de trading que integra múltiples brokers, análisis en tiempo real y coaching con IA para traders profesionales.
 
-## 🚀 Features
+## 🚀 Características Principales
 
-### Core Functionality
-- **Professional Trading Dashboard** - Real-time trading metrics and performance analysis
-- **Automated Trade Journal** - Manual and automatic trade logging with AI coaching
-- **MT5 Integration** - Secure webhook for MetaTrader 5 automation
-- **Performance Analytics** - Interactive charts with Recharts, PnL metrics, and risk-reward ratios
-- **Multi-Tenant Architecture** - Supports multiple traders with role-based access control
+- **📊 Dashboard en Tiempo Real**: Métricas de trading, equity curve y análisis de rendimiento
+- **🔐 Autenticación Robusta**: Sistema de roles (ADMIN/TRADER) con NextAuth.js
+- **📈 Integración MT5**: Webhooks seguros para datos de trading en tiempo real
+- **🤖 Chatwoot Integration**: Soporte al cliente integrado con identidad de usuario
+- **🗄️ Base de Datos PostgreSQL**: Esquema completo con Prisma ORM
+- **🎨 UI/UX Moderna**: Interfaz dark theme con Tailwind CSS y Shadcn/UI
+- **🐳 Despliegue Docker**: Configuración optimizada para EasyPanel
 
-### Technical Features
-- **NextAuth.js v5** - Advanced authentication with JWT and role-based access
-- **Shadcn/UI Components** - Professional, customizable UI components
-- **Dark Theme** - Hedge fund aesthetic with AURUM gold color palette
-- **TypeScript** - Full type safety throughout the application
-- **Zod Validation** - Robust data validation and error handling
-- **Docker Ready** - Optimized for EasyPanel deployment
-- **🤖 Automated Setup** - Zero-configuration deployment with pre-configured users and sample data
-- **🔐 Auto-Generated Credentials** - Production-ready admin and trader accounts
-- **📊 Sample Data** - Pre-populated trading history and performance metrics
+## 🛠️ Stack Tecnológico
 
-### AI Integration
-- **Chatwoot Integration** - AI coaching and emotional analysis
-- **Performance Insights** - Automated trade analysis and recommendations
-- **Risk Management** - AI-powered risk assessment and alerts
+- **Frontend**: Next.js 14+ (App Router) + React 18
+- **Backend**: Next.js API Routes + TypeScript
+- **Base de Datos**: PostgreSQL + Prisma ORM
+- **Autenticación**: NextAuth.js v5
+- **UI Framework**: Tailwind CSS + Shadcn/UI
+- **Gráficos**: Recharts
+- **Formularios**: React Hook Form + Zod
+- **Despliegue**: Docker + EasyPanel
 
-## 🛠️ Technology Stack
+## 📋 Prerrequisitos
 
-### Frontend
-- **Framework**: Next.js 14+ (App Router)
-- **Language**: TypeScript (Strict Mode)
-- **UI Framework**: Shadcn/UI + Radix Primitives
-- **Styling**: Tailwind CSS with custom AURUM theme
-- **Charts**: Recharts for data visualization
-- **Icons**: Lucide React
-
-### Backend
-- **Database**: PostgreSQL
-- **ORM**: Prisma
-- **Authentication**: NextAuth.js v5 (Credentials Provider)
-- **Validation**: Zod schemas
-- **API**: Next.js API Routes + Server Actions
-
-### DevOps
-- **Containerization**: Docker (Multi-stage builds)
-- **Deployment**: EasyPanel ready
-- **Health Checks**: Built-in monitoring endpoints
-
-## 📦 Installation
-
-### Prerequisites
-- Node.js 18.19.0 or higher
+- Node.js 18.19.0 o superior
 - PostgreSQL 14+
-- npm or yarn
+- Docker (para despliegue)
 
-### Quick Start
+## 🔧 Instalación Local
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/qhosting/aurum-invest-station.git
-   cd aurum-invest-station
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Set up environment variables**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your configuration
-   ```
-
-4. **Set up the database**
-   ```bash
-   npm run db:generate
-   npm run db:migrate
-   ```
-
-5. **Start the development server**
-   ```bash
-   npm run dev
-   ```
-
-Visit `http://localhost:3000` to access the application.
-
-## 🐳 Docker Deployment
-
-### Using Docker Compose (Recommended)
-
-1. **Clone and configure**
-   ```bash
-   git clone https://github.com/qhosting/aurum-invest-station.git
-   cd aurum-invest-station
-   cp .env.example .env
-   ```
-
-2. **Start services**
-   ```bash
-   docker-compose up -d
-   ```
-
-3. **Access the application**
-   - Application: http://localhost:3000
-   - PostgreSQL: localhost:5432
-   - Redis: localhost:6379
-
-### EasyPanel Deployment
-
-**🎯 AUTOMATED DEPLOYMENT - Zero Configuration Required!**
-
-The Docker setup includes automatic:
-- ✅ Database migrations
-- ✅ Super admin user creation
-- ✅ Demo trader account setup
-- ✅ Sample trading data generation
-- ✅ Health checks and monitoring
-
-1. **Build the Docker image**
-   ```bash
-   docker build -t aurum-invest-station .
-   ```
-
-2. **Deploy to EasyPanel**
-   - Upload the built image
-   - Set environment variables from `.env.example`
-   - Configure domain: `auruminvest.mx`
-   - The system will automatically create all required users and data
-
-**🚀 Quick Start Command:**
+### 1. Clonar el repositorio
 ```bash
-docker-compose up -d
+git clone https://github.com/qhosting/aurum-invest-station.git
+cd aurum-invest-station
 ```
 
-**Access immediately with:**
-- **Super Admin**: admin@auruminvest.mx / AURUM2024!SuperAdmin
-- **Trader Demo**: trader@auruminvest.mx / AURUM2024!Trader
-
-## 🔧 Configuration
-
-### Environment Variables
-
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `DATABASE_URL` | PostgreSQL connection string | Yes |
-| `NEXTAUTH_SECRET` | NextAuth secret key | Yes |
-| `NEXTAUTH_URL` | Application URL | Yes |
-| `NEXT_PUBLIC_CHATWOOT_TOKEN` | Chatwoot website token | No |
-| `NEXT_PUBLIC_CHATWOOT_BASE_URL` | Chatwoot base URL | No |
-
-### Database Schema
-
-The application uses three main models:
-
-- **User**: Authentication and user management
-- **Trade**: Individual trade records
-- **JournalMetric**: Daily performance snapshots
-
-## 🔐 Authentication
-
-The application supports role-based authentication:
-
-- **TRADER**: Standard trader access
-- **ADMIN**: Administrative privileges
-
-### 🚀 AUTOMATED SETUP - AUTO-GENERATED CREDENTIALS
-
-**The application includes automatic database seeding with pre-configured users:**
-
-#### 👑 Super Administrator
-```
-Email: admin@auruminvest.mx
-Password: AURUM2024!SuperAdmin
-Role: ADMIN
-Access: Full administrative privileges
-```
-
-#### 👤 Trader Demo User
-```
-Email: trader@auruminvest.mx
-Password: AURUM2024!Trader
-Role: TRADER
-Access: Standard trading dashboard with sample data
-```
-
-**⚠️ IMPORTANT: Change these passwords after your first login for security!**
-
-## 📊 Trading Features
-
-### Dashboard Metrics
-- Total Balance
-- Win Rate Percentage
-- Relative Drawdown
-- Daily P&L
-
-### Performance Analytics
-- Equity Curve visualization
-- Risk-Reward ratios
-- Profit factor calculations
-- Maximum drawdown analysis
-
-### Trade Management
-- Manual trade entry
-- Automated MT5 integration
-- Screenshot attachments
-- Setup categorization
-
-## 🤖 MT5 Integration
-
-### Webhook Setup
-
-1. **Generate API Key**
-   - API keys are automatically generated for new users
-   - Available in user profile
-
-2. **Configure MT5 Robot**
-   ```javascript
-   const webhookUrl = "https://your-domain.com/api/webhooks/mt5";
-   const apiKey = "user-api-key";
-   
-   // Example webhook payload
-   {
-     "symbol": "EURUSD",
-     "action": "OPEN",
-     "price": 1.0845,
-     "sl": 1.0800,
-     "tp": 1.0900,
-     "lotSize": 0.1,
-     "type": "BUY"
-   }
-   ```
-
-## 🎨 Theming
-
-### Color Palette
-- **Background**: `#0A192F` (Deep Navy)
-- **Surface**: `#12233A` (Cards, modals)
-- **Primary**: `#D4AF37` (Aurum Gold)
-- **Success**: `#10B981` (Green)
-- **Error**: `#EF4444` (Red)
-
-### Theme Features
-- Dark mode optimized
-- Professional hedge fund aesthetic
-- Responsive design
-- Accessibility compliant
-
-## 🔍 API Documentation
-
-### Authentication Endpoints
-- `POST /api/auth/register` - User registration
-- `POST /api/auth/signin` - User login
-- `GET /api/auth/session` - Get current session
-
-### Trading Endpoints
-- `GET /api/trades` - Get user trades
-- `POST /api/trades` - Create new trade
-- `PUT /api/trades/[id]` - Update trade
-
-### MT5 Webhook
-- `POST /api/webhooks/mt5` - Receive automated trades
-- `GET /api/webhooks/mt5` - Get trades (with API key)
-
-## 🚀 Performance
-
-### Optimizations
-- Standalone build output
-- Optimized server components
-- Dependency caching
-- Image optimization
-- Code splitting
-
-### Monitoring
-- Health check endpoints
-- Error tracking
-- Performance metrics
-- Database query optimization
-
-## 🔒 Security
-
-### Features
-- CSRF protection
-- XSS prevention
-- SQL injection protection
-- Rate limiting
-- Secure headers
-- Environment variable protection
-
-## 📈 Development
-
-### Scripts
+### 2. Instalar dependencias
 ```bash
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run start        # Start production server
-npm run lint         # Run ESLint
-npm run db:generate  # Generate Prisma client
-npm run db:migrate   # Run database migrations
-npm run db:studio    # Open Prisma Studio
+npm install
 ```
 
-### Project Structure
-```
-src/
-├── app/              # Next.js App Router
-│   ├── app/         # Dashboard pages
-│   ├── auth/        # Authentication pages
-│   ├── api/         # API routes
-│   └── globals.css  # Global styles
-├── components/      # React components
-│   ├── ui/         # Shadcn UI components
-│   ├── dashboard/  # Dashboard-specific components
-│   └── providers/  # Context providers
-├── lib/            # Utility libraries
-│   ├── auth.ts     # NextAuth configuration
-│   ├── prisma.ts   # Prisma client
-│   ├── utils.ts    # Helper functions
-│   └── validations.ts # Zod schemas
-└── types/          # TypeScript definitions
+### 3. Configurar variables de entorno
+```bash
+cp .env.example .env.local
 ```
 
-## 🤝 Contributing
+Editar `.env.local`:
+```bash
+DATABASE_URL=postgresql://username:password@localhost:5432/aurum_invest_station
+NEXTAUTH_SECRET=your-secret-key-here
+NEXTAUTH_URL=http://localhost:3000
+NEXT_PUBLIC_CHATWOOT_BASE_URL=https://your-chatwoot-instance.com
+NEXT_PUBLIC_CHATWOOT_TOKEN=your-chatwoot-token
+```
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+### 4. Configurar base de datos
+```bash
+# Generar cliente Prisma
+npx prisma generate
 
-## 📝 License
+# Ejecutar migraciones
+npx prisma migrate dev
 
-This project is licensed under the MIT License.
+# Poblar con datos de ejemplo
+npm run db:seed
+```
 
-## 🆘 Support
+### 5. Ejecutar en desarrollo
+```bash
+npm run dev
+```
 
-For support and questions:
-- Check the documentation
-- Review existing issues
-- Create a new issue with detailed information
+La aplicación estará disponible en `http://localhost:3000`
 
-## 🎯 Roadmap
+## 🐳 Despliegue con Docker
 
-- [ ] Mobile responsive design
-- [ ] Advanced charting tools
-- [ ] Social trading features
-- [ ] Mobile app development
-- [ ] Advanced AI coaching
-- [ ] Multi-language support
-- [ ] API rate limiting
-- [ ] Advanced analytics dashboard
+### Configuración para EasyPanel
+
+#### 1. Dockerfile Optimizado
+El proyecto incluye un Dockerfile optimizado que maneja:
+- Instalación automática de dependencias
+- Migraciones de base de datos
+- Seeding automático de datos
+- Configuración de variables de entorno
+
+#### 2. Variables de Entorno en EasyPanel
+```bash
+DATABASE_URL=postgresql://postgres:postgres@postgres:5432/aurum_invest_station
+NEXTAUTH_SECRET=your-generated-secret
+NEXTAUTH_URL=https://yourdomain.com
+NEXT_PUBLIC_CHATWOOT_BASE_URL=https://your-chatwoot-domain.com
+NEXT_PUBLIC_CHATWOOT_TOKEN=your-chatwoot-token
+NODE_ENV=production
+PORT=3000
+```
+
+#### 3. Recursos Recomendados
+- **RAM**: Mínimo 2GB (Recomendado 4GB)
+- **CPU**: Mínimo 1 core (Recomendado 2 cores)
+- **Almacenamiento**: 10GB mínimo
+
+## 🔑 Credenciales por Defecto
+
+Después del despliegue, se crean automáticamente:
+
+### Super Administrador
+- **Email**: admin@auruminvest.mx
+- **Contraseña**: AURUM2024!SuperAdmin
+- **Rol**: ADMIN
+
+### Trader Demo
+- **Email**: trader@auruminvest.mx
+- **Contraseña**: AURUM2024!Trader
+- **Rol**: TRADER
+
+## 📊 Estructura del Proyecto
+
+```
+aurum-invest-station/
+├── prisma/
+│   ├── schema.prisma          # Esquema de base de datos
+│   └── seed.ts               # Datos de ejemplo
+├── src/
+│   ├── app/                  # App Router de Next.js
+│   │   ├── api/             # API Routes
+│   │   ├── auth/            # Páginas de autenticación
+│   │   └── dashboard/       # Dashboard principal
+│   ├── components/          # Componentes React
+│   │   ├── ui/             # Componentes UI base
+│   │   └── dashboard/      # Componentes del dashboard
+│   ├── lib/                # Utilidades y configuraciones
+│   └── types/              # Tipos TypeScript
+├── docker-entrypoint.sh     # Script de inicialización
+├── Dockerfile               # Configuración Docker
+└── package.json            # Dependencias del proyecto
+```
+
+## 🔌 API Endpoints
+
+### Autenticación
+- `POST /api/auth/register` - Registro de usuarios
+- `GET/POST /api/auth/[...nextauth]` - Autenticación NextAuth
+
+### Trading
+- `POST /api/webhooks/mt5` - Webhook para datos MT5
+- `GET /api/health` - Health check
+
+## 🗄️ Esquema de Base de Datos
+
+### Modelos Principales
+- **User**: Usuarios del sistema (ADMIN/TRADER)
+- **Trade**: Operaciones de trading
+- **JournalMetric**: Métricas diarias del journal
+
+## 🔧 Scripts Disponibles
+
+```bash
+npm run dev          # Desarrollo
+npm run build        # Build de producción
+npm run start        # Servidor de producción
+npm run lint         # Linting
+npm run db:generate  # Generar cliente Prisma
+npm run db:migrate   # Ejecutar migraciones
+npm run db:studio    # Abrir Prisma Studio
+npm run db:seed      # Poblar con datos de ejemplo
+```
+
+## 🚨 Solución de Problemas
+
+### Error: "Prisma Schema not found"
+- Verificar que el directorio `prisma/` existe
+- Asegurar que `schema.prisma` está presente
+- Ejecutar `npx prisma generate`
+
+### Error: "Database connection failed"
+- Verificar que PostgreSQL está ejecutándose
+- Comprobar la variable `DATABASE_URL`
+- Verificar conectividad de red
+
+### Error: "Port 3000 already in use"
+- Cambiar el puerto en variables de entorno
+- O detener el proceso que usa el puerto 3000
+
+## 📈 Funcionalidades del Dashboard
+
+- **Métricas en Tiempo Real**: Equity, drawdown, win rate
+- **Gráfico de Equity Curve**: Visualización del rendimiento
+- **Tabla de Trades Recientes**: Últimas operaciones
+- **Integración Chatwoot**: Soporte al cliente
+- **Gestión de Usuarios**: Sistema de roles y permisos
+
+## 🤝 Contribuciones
+
+1. Fork el proyecto
+2. Crear una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abrir un Pull Request
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT. Ver `LICENSE` para más detalles.
+
+## 👨‍💻 Autor
+
+**MiniMax Agent** - Desarrollo completo de la plataforma
 
 ---
 
-**Built with ❤️ by MiniMax Agent**
-
-*AURUM INVEST STATION - Professional Trading Made Simple*
+**AURUM INVEST STATION v1.0** - Plataforma completa de trading con IA 🚀

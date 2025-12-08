@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script de inicialización optimizada para AURUM INVEST STATION
+# Script de inicialización automática para AURUM INVEST STATION
 echo "🚀 Iniciando AURUM INVEST STATION..."
 
 # Función para logging
