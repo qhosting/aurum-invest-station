@@ -1,0 +1,351 @@
+Commit: Message 342849656676566 - 1765257070 
+##########################################
+### Download Github Archive Started...
+### Tue, 09 Dec 2025 06:41:22 GMT
+##########################################
+
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 3.75kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:18-alpine
+#2 DONE 0.3s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B 0.0s done
+#3 DONE 0.1s
+
+#4 [builder 1/5] WORKDIR /app
+#4 CACHED
+
+#5 [base 1/1] FROM docker.io/library/node:18-alpine@sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e
+#5 resolve docker.io/library/node:18-alpine@sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e 0.0s done
+#5 CACHED
+
+#6 [runner  2/15] RUN addgroup --system --gid 1001 nodejs
+#6 DONE 0.1s
+
+#7 [runner  3/15] RUN adduser --system --uid 1001 nextjs
+#7 DONE 0.2s
+
+#8 [deps 1/4] RUN apk add --no-cache libc6-compat
+#8 0.189 fetch https://dl-cdn.alpinelinux.org/alpine/v3.21/main/x86_64/APKINDEX.tar.gz
+#8 0.452 fetch https://dl-cdn.alpinelinux.org/alpine/v3.21/community/x86_64/APKINDEX.tar.gz
+#8 1.292 (1/3) Installing musl-obstack (1.2.3-r2)
+#8 1.300 (2/3) Installing libucontext (1.3.2-r0)
+#8 1.303 (3/3) Installing gcompat (1.1.0-r4)
+#8 1.315 OK: 10 MiB in 20 packages
+#8 DONE 1.5s
+
+#9 [deps 2/4] WORKDIR /app
+#9 DONE 0.1s
+
+#10 [internal] load build context
+#10 transferring context: 1.09MB 0.1s done
+#10 DONE 0.2s
+
+#11 [deps 3/4] COPY package*.json ./
+#11 DONE 0.1s
+
+#12 [deps 4/4] RUN npm install --ignore-scripts
+#12 45.03 npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+#12 47.08 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+#12 49.04 npm warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
+#12 49.56 npm warn deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead
+#12 50.80 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+#12 55.56 npm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+#12 87.61 
+#12 87.61 added 578 packages, and audited 579 packages in 1m
+#12 87.61 
+#12 87.61 165 packages are looking for funding
+#12 87.61   run `npm fund` for details
+#12 87.85 
+#12 87.85 4 vulnerabilities (3 high, 1 critical)
+#12 87.85 
+#12 87.85 To address all issues (including breaking changes), run:
+#12 87.85   npm audit fix --force
+#12 87.85 
+#12 87.85 Run `npm audit` for details.
+#12 87.85 npm notice
+#12 87.85 npm notice New major version of npm available! 10.8.2 -> 11.6.4
+#12 87.85 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.6.4
+#12 87.85 npm notice To update run: npm install -g npm@11.6.4
+#12 87.85 npm notice
+#12 DONE 88.7s
+
+#13 [builder 2/5] COPY --from=deps /app/node_modules ./node_modules
+#13 DONE 10.8s
+
+#14 [builder 3/5] COPY . .
+#14 DONE 0.7s
+
+#15 [builder 4/5] RUN npx prisma generate
+#15 0.565 npm error config prefix cannot be changed from project config: /app/.npmrc.
+#15 3.649 warn The configuration property `package.json#prisma` is deprecated and will be removed in Prisma 7. Please migrate to a Prisma config file (e.g., `prisma.config.ts`).
+#15 3.649 For more information, see: https://pris.ly/prisma-config
+#15 3.649 
+#15 4.973 Prisma schema loaded from prisma/schema.prisma
+#15 5.565 
+#15 5.565 ✔ Generated Prisma Client (v6.19.0) to ./node_modules/@prisma/client in 234ms
+#15 5.565 
+#15 5.565 Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+#15 5.565 
+#15 5.565 Tip: Need your database queries to be 1000x faster? Accelerate offers you that and more: https://pris.ly/tip-2-accelerate
+#15 5.565 
+#15 5.629 npm notice
+#15 5.629 npm notice New major version of npm available! 10.8.2 -> 11.6.4
+#15 5.629 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.6.4
+#15 5.629 npm notice To update run: npm install -g npm@11.6.4
+#15 5.629 npm notice
+#15 DONE 5.7s
+
+#16 [builder 5/5] RUN npm run build
+#16 0.552 npm error config prefix cannot be changed from project config: /app/.npmrc.
+#16 0.680 
+#16 0.680 > aurum-invest-station@1.0.0 build
+#16 0.680 > prisma generate && next build
+#16 0.680 
+#16 3.079 warn The configuration property `package.json#prisma` is deprecated and will be removed in Prisma 7. Please migrate to a Prisma config file (e.g., `prisma.config.ts`).
+#16 3.079 For more information, see: https://pris.ly/prisma-config
+#16 3.079 
+#16 3.699 Prisma schema loaded from prisma/schema.prisma
+#16 4.351 ┌─────────────────────────────────────────────────────────┐
+#16 4.351 │  Update available 6.19.0 -> 7.1.0                       │
+#16 4.351 │                                                         │
+#16 4.351 │  This is a major update - please follow the guide at    │
+#16 4.351 │  https://pris.ly/d/major-version-upgrade                │
+#16 4.351 │                                                         │
+#16 4.351 │  Run the following to update                            │
+#16 4.351 │    npm i --save-dev prisma@latest                       │
+#16 4.351 │    npm i @prisma/client@latest                          │
+#16 4.351 └─────────────────────────────────────────────────────────┘
+#16 4.351 
+#16 4.351 ✔ Generated Prisma Client (v6.19.0) to ./node_modules/@prisma/client in 256ms
+#16 4.351 
+#16 4.351 Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+#16 4.351 
+#16 4.351 Tip: Need your database queries to be 1000x faster? Accelerate offers you that and more: https://pris.ly/tip-2-accelerate
+#16 4.351 
+#16 5.890 Attention: Next.js now collects completely anonymous telemetry regarding usage.
+#16 5.890 This information is used to shape Next.js' roadmap and prioritize features.
+#16 5.890 You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+#16 5.890 https://nextjs.org/telemetry
+#16 5.890 
+#16 6.029   ▲ Next.js 14.2.18
+#16 6.029 
+#16 6.155    Creating an optimized production build ...
+#16 45.21  ✓ Compiled successfully
+#16 45.21    Linting and checking validity of types ...
+#16 58.92    Collecting page data ...
+#16 63.71    Generating static pages (0/10) ...
+#16 64.04  ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+#16 64.04  ⚠ Unsupported metadata viewport is configured in metadata export in /auth/signin. Please move it to viewport export instead.
+#16 64.04 Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+#16 64.04  ⚠ Unsupported metadata themeColor is configured in metadata export in /auth/signin. Please move it to viewport export instead.
+#16 64.04 Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+#16 64.04  ⚠ Unsupported metadata colorScheme is configured in metadata export in /auth/signin. Please move it to viewport export instead.
+#16 64.04 Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+#16 64.04  ⚠ Unsupported metadata viewport is configured in metadata export in /auth/signin. Please move it to viewport export instead.
+#16 64.04 Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+#16 64.04  ⚠ Unsupported metadata themeColor is configured in metadata export in /auth/signin. Please move it to viewport export instead.
+#16 64.04 Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+#16 64.04  ⚠ Unsupported metadata colorScheme is configured in metadata export in /auth/signin. Please move it to viewport export instead.
+#16 64.04 Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+#16 64.04  ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+#16 64.04  ⚠ Unsupported metadata viewport is configured in metadata export in /auth/signup. Please move it to viewport export instead.
+#16 64.04 Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+#16 64.04  ⚠ Unsupported metadata themeColor is configured in metadata export in /auth/signup. Please move it to viewport export instead.
+#16 64.04 Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+#16 64.04  ⚠ Unsupported metadata colorScheme is configured in metadata export in /auth/signup. Please move it to viewport export instead.
+#16 64.04 Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+#16 64.04  ⚠ Unsupported metadata viewport is configured in metadata export in /auth/signup. Please move it to viewport export instead.
+#16 64.04 Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+#16 64.04  ⚠ Unsupported metadata themeColor is configured in metadata export in /auth/signup. Please move it to viewport export instead.
+#16 64.04 Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+#16 64.04  ⚠ Unsupported metadata colorScheme is configured in metadata export in /auth/signup. Please move it to viewport export instead.
+#16 64.04 Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+#16 64.04  ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+#16 64.04  ⚠ Unsupported metadata viewport is configured in metadata export in /_not-found. Please move it to viewport export instead.
+#16 64.04 Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+#16 64.04  ⚠ Unsupported metadata themeColor is configured in metadata export in /_not-found. Please move it to viewport export instead.
+#16 64.04 Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+#16 64.04  ⚠ Unsupported metadata colorScheme is configured in metadata export in /_not-found. Please move it to viewport export instead.
+#16 64.04 Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+#16 64.04  ⚠ Unsupported metadata viewport is configured in metadata export in /_not-found. Please move it to viewport export instead.
+#16 64.04 Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+#16 64.04  ⚠ Unsupported metadata themeColor is configured in metadata export in /_not-found. Please move it to viewport export instead.
+#16 64.04 Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+#16 64.04  ⚠ Unsupported metadata colorScheme is configured in metadata export in /_not-found. Please move it to viewport export instead.
+#16 64.04 Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+#16 64.21 Health check failed: PrismaClientInitializationError: 
+#16 64.21 Invalid `prisma.$queryRaw()` invocation:
+#16 64.21 
+#16 64.21 
+#16 64.21 Can't reach database server at `localhost:5432`
+#16 64.21 
+#16 64.21 Please make sure your database server is running at `localhost:5432`.
+#16 64.21     at ei.handleRequestError (/app/node_modules/@prisma/client/runtime/library.js:121:7568)
+#16 64.21     at ei.handleAndLogRequestError (/app/node_modules/@prisma/client/runtime/library.js:121:6593)
+#16 64.21     at ei.request (/app/node_modules/@prisma/client/runtime/library.js:121:6300)
+#16 64.21     at async a (/app/node_modules/@prisma/client/runtime/library.js:130:9551)
+#16 64.21     at async l (/app/.next/server/app/api/health/route.js:1:532)
+#16 64.21     at async /app/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:37010
+#16 64.21     at async eC.execute (/app/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:27552)
+#16 64.21     at async eC.handle (/app/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38344)
+#16 64.21     at async exportAppRoute (/app/node_modules/next/dist/export/routes/app-route.js:77:26)
+#16 64.21     at async exportPageImpl (/app/node_modules/next/dist/export/worker.js:175:20) {
+#16 64.21   clientVersion: '6.19.0',
+#16 64.21   errorCode: undefined,
+#16 64.21   retryable: undefined
+#16 64.21 }
+#16 64.21    Generating static pages (2/10) 
+#16 64.27  ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+#16 64.27  ⚠ Unsupported metadata viewport is configured in metadata export in /. Please move it to viewport export instead.
+#16 64.27 Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+#16 64.27  ⚠ Unsupported metadata themeColor is configured in metadata export in /. Please move it to viewport export instead.
+#16 64.27 Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+#16 64.27  ⚠ Unsupported metadata colorScheme is configured in metadata export in /. Please move it to viewport export instead.
+#16 64.27 Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+#16 64.27  ⚠ Unsupported metadata viewport is configured in metadata export in /. Please move it to viewport export instead.
+#16 64.27 Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+#16 64.27  ⚠ Unsupported metadata themeColor is configured in metadata export in /. Please move it to viewport export instead.
+#16 64.27 Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+#16 64.27  ⚠ Unsupported metadata colorScheme is configured in metadata export in /. Please move it to viewport export instead.
+#16 64.27 Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+#16 64.27    Generating static pages (4/10) 
+#16 64.49    Generating static pages (7/10) 
+#16 64.61  ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
+#16 64.61  ⚠ Unsupported metadata viewport is configured in metadata export in /app. Please move it to viewport export instead.
+#16 64.61 Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+#16 64.61  ⚠ Unsupported metadata themeColor is configured in metadata export in /app. Please move it to viewport export instead.
+#16 64.61 Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+#16 64.61  ⚠ Unsupported metadata colorScheme is configured in metadata export in /app. Please move it to viewport export instead.
+#16 64.61 Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+#16 64.61  ⚠ Unsupported metadata viewport is configured in metadata export in /app. Please move it to viewport export instead.
+#16 64.61 Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+#16 64.61  ⚠ Unsupported metadata themeColor is configured in metadata export in /app. Please move it to viewport export instead.
+#16 64.61 Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+#16 64.61  ⚠ Unsupported metadata colorScheme is configured in metadata export in /app. Please move it to viewport export instead.
+#16 64.61 Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+#16 64.74  ✓ Generating static pages (10/10)
+#16 65.93    Finalizing page optimization ...
+#16 65.93    Collecting build traces ...
+#16 90.80 
+#16 90.81 Route (app)                              Size     First Load JS
+#16 90.81 ┌ ƒ /                                    143 B          87.6 kB
+#16 90.81 ├ ○ /_not-found                          876 B          88.4 kB
+#16 90.81 ├ ƒ /api/auth/[...nextauth]              0 B                0 B
+#16 90.81 ├ ƒ /api/auth/register                   0 B                0 B
+#16 90.81 ├ ƒ /api/health                          0 B                0 B
+#16 90.81 ├ ƒ /api/webhooks/mt5                    0 B                0 B
+#16 90.81 ├ ƒ /app                                 133 kB          238 kB
+#16 90.81 ├ ○ /auth/signin                         3.39 kB         129 kB
+#16 90.81 └ ○ /auth/signup                         3.66 kB         129 kB
+#16 90.81 + First Load JS shared by all            87.5 kB
+#16 90.81   ├ chunks/117-5c058e04c0be355f.js       31.8 kB
+#16 90.81   ├ chunks/fd9d1056-fe992f465c928a17.js  53.6 kB
+#16 90.81   └ other shared chunks (total)          2.09 kB
+#16 90.81 
+#16 90.81 
+#16 90.81 ○  (Static)   prerendered as static content
+#16 90.81 ƒ  (Dynamic)  server-rendered on demand
+#16 90.81 
+#16 DONE 91.3s
+
+#17 [runner  4/15] COPY --from=builder /app ./
+#17 DONE 14.2s
+
+#18 [deps 4/4] RUN npm install --ignore-scripts
+#18 CACHED
+
+#19 [builder 2/5] COPY --from=deps /app/node_modules ./node_modules
+#19 CACHED
+
+#20 [builder 3/5] COPY . .
+#20 CACHED
+
+#21 [builder 4/5] RUN npx prisma generate
+#21 CACHED
+
+#22 [builder 5/5] RUN npm run build
+#22 CACHED
+
+#23 [runner  4/15] COPY --from=builder /app ./
+#23 CACHED
+
+#24 [deps 3/4] COPY package*.json ./
+#24 CACHED
+
+#25 [runner  5/15] RUN npm install -g tsx
+#25 3.666 
+#25 3.666 added 5 packages in 3s
+#25 3.666 
+#25 3.666 2 packages are looking for funding
+#25 3.666   run `npm fund` for details
+#25 3.668 npm notice
+#25 3.668 npm notice New major version of npm available! 10.8.2 -> 11.6.4
+#25 3.668 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.6.4
+#25 3.668 npm notice To update run: npm install -g npm@11.6.4
+#25 3.668 npm notice
+#25 DONE 3.8s
+
+#26 [runner  6/15] RUN mkdir -p .next || true
+#26 DONE 0.4s
+
+#27 [runner  7/15] RUN chown -R nextjs:nodejs /app
+#27 DONE 127.2s
+
+#28 [runner  8/15] RUN echo "🔍 VALIDACIÓN EXHAUSTIVA DE DOCKER-ENTRYPOINT.SH:" &&     ls -la /app/ | grep docker-entrypoint &&     if [ -f /app/docker-entrypoint.sh ]; then         echo "✅ docker-entrypoint.sh found at /app/docker-entrypoint.sh";         file /app/docker-entrypoint.sh;         chmod +x /app/docker-entrypoint.sh;         echo "✅ Permisos aplicados: $(ls -la /app/docker-entrypoint.sh)";     else         echo "❌ docker-entrypoint.sh NOT found at /app/docker-entrypoint.sh";         echo "📋 Contenido de /app:";         ls -la /app/;     fi
+#28 0.532 🔍 VALIDACIÓN EXHAUSTIVA DE DOCKER-ENTRYPOINT.SH:
+#28 0.537 -rw-r--r--    1 nextjs   nodejs        4115 Dec  8 21:11 docker-entrypoint.sh
+#28 0.538 /bin/sh: file: not found
+#28 0.538 ✅ docker-entrypoint.sh found at /app/docker-entrypoint.sh
+#28 0.544 ✅ Permisos aplicados: -rwxr-xr-x    1 nextjs   nodejs        4115 Dec  8 21:11 /app/docker-entrypoint.sh
+#28 DONE 0.7s
+
+#29 [runner  9/15] COPY start-app.sh /app/start-app.sh
+#29 DONE 0.1s
+
+#30 [runner 10/15] RUN chmod +x /app/start-app.sh
+#30 DONE 0.1s
+
+#31 [runner 11/15] RUN echo "✅ Backup script start-app.sh created"
+#31 0.124 ✅ Backup script start-app.sh created
+#31 DONE 0.1s
+
+#32 [runner 12/15] COPY repair-system.sh /app/repair-system.sh
+#32 DONE 0.1s
+
+#33 [runner 13/15] RUN chmod +x /app/repair-system.sh || echo "⚠️  chmod failed - repair script may already have correct permissions"
+#33 DONE 0.2s
+
+#34 [runner 14/15] COPY validate-system.sh /app/validate-system.sh
+#34 DONE 0.1s
+
+#35 [runner 15/15] RUN chmod +x /app/validate-system.sh || echo "⚠️  chmod failed - file may already have correct permissions"
+#35 DONE 0.2s
+
+#36 exporting to image
+#36 exporting layers
+#36 exporting layers 56.2s done
+#36 exporting manifest sha256:f2c105e54a25875a927c412e8fd21751de12ca925452f184419e4e45921fddd7 0.0s done
+#36 exporting config sha256:a4ad90e7aba7b4c1fc4df43079fa4d2401f7954d5c7f29b39621e61b5837eaeb 0.0s done
+#36 exporting attestation manifest sha256:5f5856f0f98f94036b9fc9f2cbe96f17087dd7c981baeef62896a2e71fc08d93 0.1s done
+#36 exporting manifest list sha256:237fc3eac905aa3a9c4091c1505124e11ff958cccf01d1c000810b24ee2eb6b6
+#36 exporting manifest list sha256:237fc3eac905aa3a9c4091c1505124e11ff958cccf01d1c000810b24ee2eb6b6 0.0s done
+#36 naming to docker.io/easypanel/qhosting/aurum-station:latest done
+#36 unpacking to docker.io/easypanel/qhosting/aurum-station:latest
+#36 unpacking to docker.io/easypanel/qhosting/aurum-station:latest 68.5s done
+#36 DONE 125.1s
+
+ 4 warnings found (use docker --debug to expand):
+ - LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 46)
+ - LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 92)
+ - LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 93)
+ - SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ENV "NEXTAUTH_SECRET") (line 36)
+##########################################
+### Success
+### Tue, 09 Dec 2025 06:46:03 GMT
+##########################################
