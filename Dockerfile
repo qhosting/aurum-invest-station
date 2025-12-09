@@ -11,8 +11,15 @@ WORKDIR /app
 
 # Copy only package files first
 COPY package*.json ./
-# Install production dependencies only - USAR npm install, NO npm ci
-RUN npm install --ignore-scripts || echo "ERROR: npm install falló - EasyPanel debe usar npm install no npm ci"
+# Install production dependencies only - ROBUST NETWORK HANDLING
+RUN npm config set fetch-timeout 600000 && \
+    npm config set fetch-retries 5 && \
+    npm config set fetch-retry-mintimeout 20000 && \
+    npm config set fetch-retry-maxtimeout 120000 && \
+    npm install --prefer-offline --ignore-scripts || \
+    (echo "ERROR: npm install falló - Intentando con configuración alternativa..." && \
+     npm install --no-optional --ignore-scripts --legacy-peer-deps) || \
+    echo "ERROR: npm install falló completamente - revisar conectividad de red"
 
 # Rebuild the source code only when needed
 FROM base AS builder
