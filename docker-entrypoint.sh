@@ -1,5 +1,45 @@
 #!/bin/bash
 
+# ===== VALIDACIÓN Y DIAGNÓSTICO COMPLETO =====
+echo "🔍 DIAGNÓSTICO COMPLETO DE DOCKER-ENTRYPOINT.SH"
+echo "=================================================="
+
+# Validar que el script está en la ubicación correcta
+SCRIPT_PATH="/app/docker-entrypoint.sh"
+echo "🔍 Verificando ubicación del script..."
+echo "Script path: $SCRIPT_PATH"
+echo "Script actual (\$0): $0"
+echo "PID: $$"
+
+if [ ! -f "$SCRIPT_PATH" ]; then
+    echo "❌ ERROR CRÍTICO: $SCRIPT_PATH no encontrado!"
+    echo "📁 Directorio actual: $(pwd)"
+    echo "📋 Contenido de /app:"
+    ls -la /app/ 2>/dev/null || echo "❌ No se puede acceder a /app"
+    echo "🔍 Buscando docker-entrypoint.sh en todo el sistema:"
+    find / -name "docker-entrypoint.sh" -type f 2>/dev/null || echo "❌ No encontrado"
+    echo "❌ ABORTANDO EJECUCIÓN - Archivo no encontrado"
+    exit 1
+fi
+
+echo "✅ Script encontrado en: $SCRIPT_PATH"
+echo "📊 Permisos del archivo:"
+ls -la "$SCRIPT_PATH"
+
+# Verificar que es ejecutable
+if [ ! -x "$SCRIPT_PATH" ]; then
+    echo "⚠️  Script no es ejecutable, aplicando permisos..."
+    chmod +x "$SCRIPT_PATH"
+    echo "✅ Permisos aplicados: $(ls -la "$SCRIPT_PATH")"
+fi
+
+# Verificar variables de entorno críticas
+echo "🔍 Variables de entorno:"
+echo "NODE_ENV: ${NODE_ENV:-'NO DEFINIDA'}"
+echo "DATABASE_URL: ${DATABASE_URL:0:30}..."
+echo "NEXTAUTH_URL: ${NEXTAUTH_URL:-'NO DEFINIDA'}"
+echo "PORT: ${PORT:-'NO DEFINIDA'}"
+
 # Script de inicialización automática para AURUM INVEST STATION
 echo "🚀 Iniciando AURUM INVEST STATION..."
 

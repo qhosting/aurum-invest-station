@@ -30,6 +30,12 @@ ENV TS_NODE_TRANSPILE_ONLY=1
 # Generate Prisma client explicitly
 RUN npx prisma generate
 
+# Build the application with default values for environment variables during build
+# Use dummy values for build time to avoid DATABASE_URL errors
+ENV DATABASE_URL="postgresql://postgres:postgres@localhost:5432/build"
+ENV NEXTAUTH_SECRET="dummy-secret-for-build"
+ENV NEXTAUTH_URL="http://localhost:3000"
+
 # Build the application
 RUN npm run build
 
@@ -54,11 +60,10 @@ RUN chown -R nextjs:nodejs /app
 
 # Make docker-entrypoint.sh executable with extensive validation
 USER root
-RUN echo "🔍 Validando docker-entrypoint.sh..." && \
-    ls -la /app/docker-entrypoint.sh && \
-    chmod +x /app/docker-entrypoint.sh && \
-    echo "✅ Permisos aplicados: $(ls -la /app/docker-entrypoint.sh)" && \
-    file /app/docker-entrypoint.sh
+RUN [ -f /app/docker-entrypoint.sh ] && echo "✅ docker-entrypoint.sh found" || echo "❌ docker-entrypoint.sh NOT found"
+RUN [ -f /app/docker-entrypoint.sh ] && file /app/docker-entrypoint.sh || true
+RUN chmod +x /app/docker-entrypoint.sh
+RUN ls -la /app/docker-entrypoint.sh
 USER nextjs
 
 EXPOSE 3000
@@ -66,4 +71,4 @@ ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
 
 # Use absolute path for docker-entrypoint.sh with validation
-CMD ["sh", "-c", "echo '🚀 Iniciando contenedor...' && ls -la /app/docker-entrypoint.sh && /app/docker-entrypoint.sh npm start"]
+CMD ["sh", "-c", "[ -f /app/docker-entrypoint.sh ] && /app/docker-entrypoint.sh npm start || (echo 'ERROR: docker-entrypoint.sh not found' && exit 1)"]
