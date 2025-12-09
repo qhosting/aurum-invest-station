@@ -93,9 +93,9 @@ ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
 
 # Copy validation script
+USER root
 COPY validate-system.sh /app/validate-system.sh
 # Apply permissions before changing ownership to avoid permission issues
-USER root
 RUN chmod +x /app/validate-system.sh || echo "⚠️  chmod failed - file may already have correct permissions"
 USER nextjs
 
