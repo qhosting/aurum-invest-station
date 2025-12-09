@@ -1,0 +1,437 @@
+<?php
+$page_title = 'Cuadre de Cobranza';
+require 'includes/header.php';
+
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+// *** MODIFICACIÓN 1: ACTUALIZAR BANCOS (SOLO AL FILTRAR) ***
+if (isset($_GET['gestor']) || isset($_GET['fecha_inicio'])) {
+    // Optimización: copia el banco del estado de cuenta a pagos si falta
+    $sql_update_bancos = "UPDATE pagos p
+                          JOIN ticket t ON p.ticket_id_origen = t.id
+                          JOIN estado_de_cuenta ec ON t.id = ec.ticket_id
+                          SET p.bank = ec.bank
+                          WHERE p.ticket_id_origen IS NOT NULL
+                              AND ec.bank IS NOT NULL
+                              AND p.bank IS NULL"; 
+
+    $stmt_update = $conn->prepare($sql_update_bancos);
+    if ($stmt_update) {
+        $stmt_update->execute();
+        $stmt_update->close();
+    }
+}
+
+// --- 1. CÁLCULO DE FECHAS Y MANEJO DE FILTROS ---
+$hoy = time();
+$fecha_inicio_default = date('Y-m-d', strtotime('last Saturday', $hoy));
+if (date('w', $hoy) == 6) { $fecha_inicio_default = date('Y-m-d', $hoy); }
+$fecha_fin_default = date('Y-m-d', strtotime('this Friday', $hoy));
+
+$fecha_inicio = $_GET['fecha_inicio'] ?? $fecha_inicio_default;
+$fecha_fin = $_GET['fecha_fin'] ?? $fecha_fin_default;
+$gestor_seleccionado = $_GET['gestor'] ?? 'TODOS';
+
+$fecha_inicio_full = $fecha_inicio . ' 00:00:00';
+$fecha_fin_full = $fecha_fin . ' 23:59:59';
+
+// Obtener lista de gestores para el select
+$gestores = [];
+$sql_gestores = "SELECT DISTINCT codigo_gestor FROM pagos WHERE fechahora BETWEEN ? AND ? AND codigo_gestor IS NOT NULL AND codigo_gestor != '' ORDER BY codigo_gestor";
+$stmt_gestores = $conn->prepare($sql_gestores);
+$stmt_gestores->bind_param("ss", $fecha_inicio_full, $fecha_fin_full);
+$stmt_gestores->execute();
+$stmt_gestores->store_result();
+$stmt_gestores->bind_result($codigo_gestor_db);
+while ($stmt_gestores->fetch()) {
+    $gestores[] = ['codigo_gestor' => $codigo_gestor_db];
+}
+$stmt_gestores->close();
+
+// --- Lógica para detectar duplicados ---
+$duplicate_keys = [];
+$sql_duplicados = "SELECT cod_cliente, fechahora FROM pagos
+                    WHERE fechahora BETWEEN ? AND ?
+                    GROUP BY cod_cliente, fechahora
+                    HAVING COUNT(*) > 1";
+$stmt_duplicados = $conn->prepare($sql_duplicados);
+$stmt_duplicados->bind_param("ss", $fecha_inicio_full, $fecha_fin_full);
+$stmt_duplicados->execute();
+$stmt_duplicados->store_result();
+$stmt_duplicados->bind_result($cod_cliente_dup, $fechahora_dup);
+while($stmt_duplicados->fetch()) {
+    $key = $cod_cliente_dup . '|' . $fechahora_dup;
+    $duplicate_keys[$key] = true;
+}
+$stmt_duplicados->close();
+
+// --- 2. QUERIES PARA LOS RESÚMENES (Semanal) ---
+$sql_semanal = "SELECT 
+                    CASE WHEN ec.fecha_operacion >= ? THEN 'ACTUAL' ELSE 'ANTERIOR' END AS categoria, 
+                    ec.bank AS nombre_banco,
+                    COUNT(p.idpag) AS ctas, 
+                    SUM(p.montop) AS total_cobros 
+                FROM pagos p 
+                JOIN ticket t ON t.id = CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(p.ref_pago, 'TICKET ID: ', -1), ' ', 1) AS UNSIGNED) 
+                JOIN estado_de_cuenta ec ON t.id = ec.ticket_id 
+                WHERE p.fechahora BETWEEN ? AND ? 
+                  AND ec.id IS NOT NULL 
+                  AND p.tipocap = 'BANCARIO'";
+if ($gestor_seleccionado !== 'TODOS') { $sql_semanal .= " AND p.codigo_gestor = ?"; }
+$sql_semanal .= " GROUP BY categoria, nombre_banco";
+
+$resumen_semanal = [
+    'ACTUAL' => ['total_ctas' => 0, 'total_cobros' => 0, 'detalle' => []],
+    'ANTERIOR' => ['total_ctas' => 0, 'total_cobros' => 0, 'detalle' => []]
+];
+
+$stmt_semanal = $conn->prepare($sql_semanal);
+$fecha_inicio_sabado_str = date('Y-m-d', strtotime($fecha_inicio));
+if ($gestor_seleccionado !== 'TODOS') { 
+    $stmt_semanal->bind_param("ssss", $fecha_inicio_sabado_str, $fecha_inicio_full, $fecha_fin_full, $gestor_seleccionado); 
+} else { 
+    $stmt_semanal->bind_param("sss", $fecha_inicio_sabado_str, $fecha_inicio_full, $fecha_fin_full); 
+}
+$stmt_semanal->execute();
+$stmt_semanal->store_result();
+$stmt_semanal->bind_result($categoria, $nombre_banco, $ctas, $total_cobros);
+
+while($stmt_semanal->fetch()) {
+    if ($categoria) { 
+        $banco_key = empty($nombre_banco) ? 'NO IDENTIFICADO' : strtoupper(trim($nombre_banco));
+        $resumen_semanal[$categoria]['detalle'][$banco_key] = ['ctas' => $ctas, 'cobros' => $total_cobros];
+        $resumen_semanal[$categoria]['total_ctas'] += $ctas;
+        $resumen_semanal[$categoria]['total_cobros'] += $total_cobros;
+    }
+}
+$stmt_semanal->close();
+
+// Discrepancias (Tickets sin banco y viceversa)
+$discrepancias = [];
+$sql_disc1 = "SELECT COUNT(t.id) as ctas, SUM(t.monto) as total FROM ticket t LEFT JOIN estado_de_cuenta ec ON t.id = ec.ticket_id WHERE t.creado_en BETWEEN ? AND ? AND ec.id IS NULL";
+if ($gestor_seleccionado !== 'TODOS') { $sql_disc1 .= " AND t.codigo_gestor = ?"; }
+$stmt_disc1 = $conn->prepare($sql_disc1);
+if ($gestor_seleccionado !== 'TODOS') { $stmt_disc1->bind_param("sss", $fecha_inicio_full, $fecha_fin_full, $gestor_seleccionado); } else { $stmt_disc1->bind_param("ss", $fecha_inicio_full, $fecha_fin_full); }
+$stmt_disc1->execute();
+$stmt_disc1->store_result();
+$stmt_disc1->bind_result($ctas1, $total1);
+$stmt_disc1->fetch();
+$discrepancias['tickets_sin_banco'] = ['ctas' => $ctas1 ?? 0, 'total' => $total1 ?? 0];
+$stmt_disc1->close();
+
+$sql_disc2 = "SELECT COUNT(id) as ctas, SUM(abono) as total FROM estado_de_cuenta WHERE abono > 0 AND (ticket_id IS NULL OR ticket_id = 0) AND fecha_operacion BETWEEN ? AND ?";
+$stmt_disc2 = $conn->prepare($sql_disc2);
+$stmt_disc2->bind_param("ss", $fecha_inicio, $fecha_fin);
+$stmt_disc2->execute();
+$stmt_disc2->store_result();
+$stmt_disc2->bind_result($ctas2, $total2);
+$stmt_disc2->fetch();
+$discrepancias['banco_sin_ticket'] = ['ctas' => $ctas2 ?? 0, 'total' => $total2 ?? 0];
+$stmt_disc2->close();
+
+// --- 3. CONSULTA PRINCIPAL PARA EL DETALLE ---
+$reporte_por_gestor = [];
+$sql_main = "SELECT p.idpag AS id_pago, p.fechahora AS fecha_pago, p.cod_cliente, p.montop AS monto_pago, CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(p.ref_pago, 'TICKET ID: ', -1), ' ', 1) AS UNSIGNED) AS ticket_id, p.tipocap, p.ticket_id_origen, p.codigo_gestor, p.bank AS nombre_banco, ec.id AS id_banco, ec.fecha_operacion AS f_banco, ec.fecha_identificado AS f_conci FROM pagos p LEFT JOIN ticket t ON t.id = CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(p.ref_pago, 'TICKET ID: ', -1), ' ', 1) AS UNSIGNED) LEFT JOIN estado_de_cuenta ec ON t.id = ec.ticket_id WHERE p.fechahora BETWEEN ? AND ?";
+
+if ($gestor_seleccionado !== 'TODOS') { $sql_main .= " AND p.codigo_gestor = ?"; }
+$sql_main .= " ORDER BY p.codigo_gestor, p.fechahora ASC";
+$stmt_main = $conn->prepare($sql_main);
+if ($gestor_seleccionado !== 'TODOS') { $stmt_main->bind_param("sss", $fecha_inicio_full, $fecha_fin_full, $gestor_seleccionado); } 
+else { $stmt_main->bind_param("ss", $fecha_inicio_full, $fecha_fin_full); }
+$stmt_main->execute();
+$stmt_main->store_result();
+
+$stmt_main->bind_result($id_pago, $fecha_pago, $cod_cliente, $monto_pago, $ticket_id, $tipocap, $ticket_id_origen, $codigo_gestor, $nombre_banco, $id_banco, $f_banco, $f_conci);
+
+while ($stmt_main->fetch()) {
+    $fila_completa = ['id_pago' => $id_pago, 'fecha_pago' => $fecha_pago, 'codigo_cliente' => $cod_cliente, 'monto_pago' => $monto_pago, 'ticket_id' => $ticket_id, 'tipocap' => $tipocap, 'ticket_id_origen' => $ticket_id_origen, 'codigo_gestor' => $codigo_gestor, 'nombre_banco' => $nombre_banco, 'id_banco' => $id_banco, 'f_banco' => $f_banco, 'f_conci' => $f_conci];
+    
+    if (empty($codigo_gestor)) continue;
+    if (!isset($reporte_por_gestor[$codigo_gestor])) { $reporte_por_gestor[$codigo_gestor] = ['COBRANZA GESTOR' => [], 'BANCOS GESTOR' => [], 'BANCOS BOT' => []]; }
+    if ($fila_completa['tipocap'] === 'GESTOR') { $reporte_por_gestor[$codigo_gestor]['COBRANZA GESTOR'][] = $fila_completa; } 
+    elseif ($fila_completa['tipocap'] === 'BANCARIO') {
+        if ($fila_completa['ticket_id_origen'] === null) { $reporte_por_gestor[$codigo_gestor]['BANCOS GESTOR'][] = $fila_completa; } 
+        else { $reporte_por_gestor[$codigo_gestor]['BANCOS BOT'][] = $fila_completa; }
+    }
+}
+$stmt_main->close();
+
+// Totales Generales
+$bancos_total_ctas = 0; $bancos_total_cobros = 0;
+foreach ($reporte_por_gestor as $gestor => $datos) {
+    $bancos_total_ctas += count($datos['BANCOS BOT']);
+    $bancos_total_cobros += array_sum(array_column($datos['BANCOS BOT'], 'monto_pago'));
+    $bancos_total_ctas += count($datos['BANCOS GESTOR']);
+    $bancos_total_cobros += array_sum(array_column($datos['BANCOS GESTOR'], 'monto_pago'));
+}
+
+$resumen_semanal_total_ctas = ($resumen_semanal['ACTUAL']['total_ctas'] ?? 0) + ($resumen_semanal['ANTERIOR']['total_ctas'] ?? 0);
+$resumen_semanal_total_cobros = ($resumen_semanal['ACTUAL']['total_cobros'] ?? 0) + ($resumen_semanal['ANTERIOR']['total_cobros'] ?? 0);
+
+$discrepancia_ctas = $bancos_total_ctas - $resumen_semanal_total_ctas;
+$discrepancia_cobros = $bancos_total_cobros - $resumen_semanal_total_cobros;
+?>
+
+<h2>Cuadre de Cobranza Semanal</h2>
+
+<form method="get" action="cuadre.php">
+    <label for="gestor">Gestor:</label>
+    <select name="gestor">
+        <option value="TODOS">-- Todos los Gestores --</option>
+        <?php foreach ($gestores as $g): ?>
+            <option value="<?php echo htmlspecialchars($g['codigo_gestor']); ?>" <?php echo $gestor_seleccionado === $g['codigo_gestor'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($g['codigo_gestor']); ?></option>
+        <?php endforeach; ?>
+    </select>
+    <label for="fecha_inicio">Fecha Inicio:</label>
+    <input type="date" name="fecha_inicio" value="<?php echo htmlspecialchars($fecha_inicio); ?>" required>
+    <label for="fecha_fin">Fecha Fin:</label>
+    <input type="date" name="fecha_fin" value="<?php echo htmlspecialchars($fecha_fin); ?>" required>
+    <button type="submit">Filtrar</button>
+</form>
+
+<div class="summary-container">
+    <div class="card">
+        <h4>Resumen Semanal (Solo Bancos)</h4>
+        
+        <div class="summary-line">
+            <span class="label">ACTUAL:</span> 
+            <span class="value">
+                <span class="ctas">CTAS <?php echo $resumen_semanal['ACTUAL']['total_ctas']; ?></span> 
+                <span class="text-success">$<?php echo number_format($resumen_semanal['ACTUAL']['total_cobros'], 0); ?></span>
+            </span>
+        </div>
+        <?php ksort($resumen_semanal['ACTUAL']['detalle']); ?>
+        <?php foreach ($resumen_semanal['ACTUAL']['detalle'] as $banco_nombre => $banco_datos): ?>
+        <div class="summary-line" style="padding-left: 20px;">
+            <span class="label" style="color: #555;">↳ <?php echo htmlspecialchars($banco_nombre); ?>:</span>
+            <span class="value" style="font-weight: normal;">
+                <span class="ctas">CTAS <?php echo $banco_datos['ctas']; ?></span> 
+                <span class="text-success">$<?php echo number_format($banco_datos['cobros'], 0); ?></span>
+            </span>
+        </div>
+        <?php endforeach; ?>
+
+        <div class="summary-line" style="margin-top: 10px;">
+            <span class="label">ANTERIOR:</span> 
+            <span class="value">
+                <span class="ctas">CTAS <?php echo $resumen_semanal['ANTERIOR']['total_ctas']; ?></span> 
+                <span class="text-success">$<?php echo number_format($resumen_semanal['ANTERIOR']['total_cobros'], 0); ?></span>
+            </span>
+        </div>
+        <?php ksort($resumen_semanal['ANTERIOR']['detalle']); ?>
+        <?php foreach ($resumen_semanal['ANTERIOR']['detalle'] as $banco_nombre => $banco_datos): ?>
+        <div class="summary-line" style="padding-left: 20px;">
+            <span class="label" style="color: #555;">↳ <?php echo htmlspecialchars($banco_nombre); ?>:</span>
+            <span class="value" style="font-weight: normal;">
+                <span class="ctas">CTAS <?php echo $banco_datos['ctas']; ?></span> 
+                <span class="text-success">$<?php echo number_format($banco_datos['cobros'], 0); ?></span>
+            </span>
+        </div>
+        <?php endforeach; ?>
+
+        <div class="summary-total"><span class="label">TOTAL:</span> <span class="value"><span class="ctas">CTAS <?php echo $resumen_semanal_total_ctas; ?></span> $<?php echo number_format($resumen_semanal_total_cobros, 0); ?></span></div>
+        <div class="summary-line" style="margin-top: 10px; border-top: 2px solid #dee2e6; padding-top: 10px;"><span class="label text-danger">Discrepancia:</span><span class="value text-danger"><span class="ctas">CTAS <?php echo $discrepancia_ctas; ?></span> $<?php echo number_format($discrepancia_cobros, 0); ?></span></div>
+    </div>
+    <div class="card">
+        <h4>Resumen de Discrepancias</h4>
+        <div class="summary-line"><span class="label">Tickets sin conciliar:</span> <span class="value text-danger"><?php echo $discrepancias['tickets_sin_banco']['ctas'] ?? 0; ?> (Suma: $<?php echo number_format($discrepancias['tickets_sin_banco']['total'] ?? 0, 0); ?>)</span></div>
+        <div class="summary-line"><span class="label">Abonos sin asignar:</span> <span class="value text-warning"><?php echo $discrepancias['banco_sin_ticket']['ctas'] ?? 0; ?> (Suma: $<?php echo number_format($discrepancias['banco_sin_ticket']['total'] ?? 0, 0); ?>)</span></div>
+    </div>
+</div>
+<hr>
+
+<?php if (empty($reporte_por_gestor)): ?>
+    <div class="alert alert-success">No se encontraron pagos con los filtros seleccionados.</div>
+<?php else: ?>
+    <?php foreach ($reporte_por_gestor as $gestor => $datos): ?>
+        
+        <?php
+        // =================================================================================
+        // *** MODIFICACIÓN: CONSULTA DE CIERRE Y LOGICA DE ROLLOVER DE FECHAS (VIERNES) ***
+        // =================================================================================
+        $display_cierre = '';
+        
+        // 1. Consultar estado del gestor actual
+        $sql_g_info = "SELECT horacierre, conciliado FROM gestores WHERE codigo_gestor = ?";
+        $stmt_g = $conn->prepare($sql_g_info);
+        $stmt_g->bind_param("s", $gestor);
+        $stmt_g->execute();
+        $stmt_g->bind_result($db_horacierre, $db_conciliado);
+        $stmt_g->fetch();
+        $stmt_g->close();
+
+        // 2. Verificar condiciones: Conciliado=1 y existe fecha
+        if ($db_conciliado == 1 && !empty($db_horacierre)) {
+            // El formato esperado es "d/m/Y h:i a" (ej: 12/12/2025 10:53 am)
+            $dt_cierre = DateTime::createFromFormat('d/m/Y h:i a', $db_horacierre);
+            
+            if ($dt_cierre) {
+                $dia_semana = $dt_cierre->format('N'); // 1=Lunes, 5=Viernes, 6=Sabado
+                $hora_dia = (int)$dt_cierre->format('H'); // Formato 24hrs (0-23)
+
+                // 3. Regla: Solo aplica si es Viernes (5) y hora <= 12
+                if ($dia_semana == 5 && $hora_dia <= 12) {
+                    
+                    // Convertir a formato SQL (Y-m-d H:i:s) para la consulta
+                    $fecha_sql = $dt_cierre->format('Y-m-d H:i:s');
+                    
+                    // 4. EJECUTAR UPDATE: Mover pagos posteriores al día siguiente (Sábado)
+                    // Buscamos pagos de este gestor en ese mismo VIERNES pero con hora mayor al cierre
+                    $sql_rollover = "UPDATE pagos 
+                                     SET fechap = DATE_ADD(fechap, INTERVAL 1 DAY),
+                                         fechahora = DATE_ADD(fechahora, INTERVAL 1 DAY)
+                                     WHERE codigo_gestor = ?
+                                       AND fechahora > ? 
+                                       AND DATE(fechahora) = DATE(?)"; // Asegura que solo afecte pagos de ese mismo día
+
+                    $stmt_upd = $conn->prepare($sql_rollover);
+                    if ($stmt_upd) {
+                        $stmt_upd->bind_param("sss", $gestor, $fecha_sql, $fecha_sql);
+                        $stmt_upd->execute();
+                        $stmt_upd->close();
+                    }
+
+                    // Visual: Etiqueta Roja
+                    $display_cierre = " <span style='background-color: #dc3545; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7em; vertical-align: middle; margin-left: 10px;'>[CIERRE {$db_horacierre}]</span>";
+                } else {
+                    // Si está cerrado pero NO cumple la regla de Viernes 12:00, solo mostramos gris informativo o nada
+                     $display_cierre = " <span style='background-color: #6c757d; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7em; vertical-align: middle; margin-left: 10px;'>[CIERRE {$db_horacierre}]</span>";
+                }
+            }
+        }
+        // =================================================================================
+        ?>
+
+        <h3 class="gestor-header">
+            <?php echo htmlspecialchars($gestor); ?>
+            <?php echo $display_cierre; ?>
+        </h3>
+        
+        <div class="card" style="margin-bottom: 30px;">
+        
+            <?php
+                // Resumen por gestor
+                $resumen_gestor = [
+                    'BANCOS BOT' => ['ctas' => 0, 'cobros' => 0],
+                    'BANCOS GESTOR' => ['ctas' => 0, 'cobros' => 0],
+                    'COBRANZA GESTOR' => ['ctas' => 0, 'cobros' => 0]
+                ];
+                $resumen_bancos_bot_detalle = []; 
+                $total_ctas = 0; $total_cobros = 0;
+
+                foreach ($datos as $tipo => $pagos) {
+                    if (!isset($resumen_gestor[$tipo])) {
+                         $resumen_gestor[$tipo] = ['ctas' => 0, 'cobros' => 0];
+                    }
+
+                    $count = count($pagos);
+                    $sum = array_sum(array_column($pagos, 'monto_pago'));
+                    
+                    $resumen_gestor[$tipo] = ['ctas' => $count, 'cobros' => $sum];
+                    $total_ctas += $count;
+                    $total_cobros += $sum;
+
+                    if ($tipo === 'BANCOS BOT') {
+                        foreach ($pagos as $pago) {
+                            $monto = $pago['monto_pago'];
+                            $banco = $pago['nombre_banco']; 
+                            
+                            if (empty($banco)) {
+                                $banco_key = 'NO IDENTIFICADO';
+                            } else {
+                                $banco_key = strtoupper(trim($banco)); 
+                            }
+
+                            if (!isset($resumen_bancos_bot_detalle[$banco_key])) {
+                                $resumen_bancos_bot_detalle[$banco_key] = ['ctas' => 0, 'cobros' => 0];
+                            }
+                            $resumen_bancos_bot_detalle[$banco_key]['ctas']++;
+                            $resumen_bancos_bot_detalle[$banco_key]['cobros'] += $monto;
+                        }
+                    }
+                }
+                ksort($resumen_bancos_bot_detalle);
+            ?>
+
+            <div class="summary-line"><span class="label">BANCOS BOT:</span><span class="value"><span class="ctas">CTAS <?php echo $resumen_gestor['BANCOS BOT']['ctas']; ?></span> $<?php echo number_format($resumen_gestor['BANCOS BOT']['cobros'], 0); ?></span></div>
+            
+            <?php foreach ($resumen_bancos_bot_detalle as $banco_nombre => $banco_datos): ?>
+                <div class="summary-line" style="padding-left: 20px;">
+                    <span class="label" style="color: #555;">↳ BANCOS BOT <?php echo htmlspecialchars($banco_nombre); ?>:</span>
+                    <span class="value" style="font-weight: normal;">
+                        <span class="ctas">CTAS <?php echo $banco_datos['ctas']; ?></span> $<?php echo number_format($banco_datos['cobros'], 0); ?>
+                    </span>
+                </div>
+            <?php endforeach; ?>
+
+            <div class="summary-line"><span class="label">BANCOS GESTOR:</span><span class="value"><span class="ctas">CTAS <?php echo $resumen_gestor['BANCOS GESTOR']['ctas']; ?></span> $<?php echo number_format($resumen_gestor['BANCOS GESTOR']['cobros'], 0); ?></span></div>
+            <div class="summary-line"><span class="label">COBRANZA GESTOR:</span><span class="value"><span class="ctas">CTAS <?php echo $resumen_gestor['COBRANZA GESTOR']['ctas']; ?></span> $<?php echo number_format($resumen_gestor['COBRANZA GESTOR']['cobros'], 0); ?></span></div>
+            <div class="summary-total"><span class="label">TOTAL GESTOR:</span><span class="value"><span class="ctas">CTAS <?php echo $total_ctas; ?></span> $<?php echo number_format($total_cobros, 0); ?></span></div>
+            </div>
+
+        <?php foreach ($datos as $tipo => $pagos): ?>
+            <h4 class="<?php echo get_title_class($tipo); ?>"><?php echo $tipo; ?></h4>
+            <?php if (empty($pagos)): ?>
+                <p>No hay registros para este tipo de cobranza.</p>
+            <?php else: ?>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID PAGO</th><th>FECHA</th><th>CODIGO (CLIENTE)</th><th>MONTO</th><th>ID TICKET</th><th>BANCO PAGO</th><th>ID BANCO</th><th>F. BANCO</th><th>F. CONCI</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($pagos as $pago): ?>
+                            <?php
+                                $row_classes = [];
+                                if (!empty($pago['id_banco'])) {
+                                    $row_classes[] = 'reconciled';
+                                } else {
+                                    $row_classes[] = 'unreconciled';
+                                }
+                                
+                                $key_duplicado = $pago['codigo_cliente'] . '|' . $pago['fecha_pago'];
+                                if (isset($duplicate_keys[$key_duplicado])) {
+                                    $row_classes[] = 'duplicate';
+                                }
+                            ?>
+                            <tr class="<?php echo implode(' ', $row_classes); ?>">
+                                <td class="td-id"><?php echo $pago['id_pago']; ?></td>
+                                <td class="td-date"><?php echo date('Y-m-d H:i', strtotime($pago['fecha_pago'])); ?></td>
+                                <td><?php echo htmlspecialchars($pago['codigo_cliente']); ?></td>
+                                <td class="td-amount">$<?php echo number_format($pago['monto_pago'], 0); ?></td>
+                                <td class="td-id"><?php echo $pago['ticket_id'] > 0 ? $pago['ticket_id'] : '-'; ?></td>
+                                <td><?php echo htmlspecialchars($pago['nombre_banco'] ?? '-'); ?></td>
+                                <td class="td-id"><?php echo $pago['id_banco'] ?? '-'; ?></td>
+                                <td class="td-date"><?php echo $pago['f_banco'] ? date('Y-m-d', strtotime($pago['f_banco'])) : '-'; ?></td>
+                                <td class="td-date"><?php echo $pago['f_conci'] ? date('Y-m-d', strtotime($pago['f_conci'])) : '-'; ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                    <tfoot>
+                        <tr style="font-weight: bold;">
+                            <td colspan="2" style="text-align:right;">TOTAL CATEGORÍA</td>
+                            <td>(<?php echo $resumen_gestor[$tipo]['ctas']; ?> Cuentas)</td>
+                            <td class="td-amount">$<?php echo number_format($resumen_gestor[$tipo]['cobros'], 0); ?></td>
+                            <td colspan="5"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            <?php endif; ?>
+        <?php endforeach; ?>
+        <hr>
+    <?php endforeach; ?>
+<?php endif; ?>
+
+<?php
+function get_title_class($tipo) {
+    switch ($tipo) {
+        case 'BANCOS BOT': return 'title-bancos-bot';
+        case 'BANCOS GESTOR': return 'title-bancos-gestor';
+        case 'COBRANZA GESTOR': return 'title-cobranza-gestor';
+        default: return '';
+    }
+}
+require 'includes/footer.php'; 
+?>
