@@ -1,4 +1,5 @@
-# Dockerfile ultra-optimizado para EasyPanel - ALL BACKUP SCRIPTS READY
+# Dockerfile ultra-optimizado para EasyPanel - EMERGENCY DEPLOY: CMD ROBUSTO ACTIVO
+# ALL BACKUP SCRIPTS READY - validate-system.sh, start-app.sh, repair-system.sh
 FROM node:18-alpine AS base
 
 # Install dependencies only when needed
