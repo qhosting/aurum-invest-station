@@ -76,9 +76,16 @@ RUN echo "🔍 VALIDACIÓN EXHAUSTIVA DE DOCKER-ENTRYPOINT.SH:" && \
 
 # Copy robust startup script as backup
 COPY start-app.sh /app/start-app.sh
+# Apply permissions before changing ownership to avoid permission issues
+USER root
 RUN chmod +x /app/start-app.sh
+USER nextjs
 RUN echo "✅ Backup script start-app.sh created"
 
+# Copy repair script for automatic system repair
+COPY repair-system.sh /app/repair-system.sh
+USER root
+RUN chmod +x /app/repair-system.sh || echo "⚠️  chmod failed - repair script may already have correct permissions"
 USER nextjs
 
 EXPOSE 3000
@@ -87,7 +94,10 @@ ENV HOSTNAME "0.0.0.0"
 
 # Copy validation script
 COPY validate-system.sh /app/validate-system.sh
-RUN chmod +x /app/validate-system.sh
+# Apply permissions before changing ownership to avoid permission issues
+USER root
+RUN chmod +x /app/validate-system.sh || echo "⚠️  chmod failed - file may already have correct permissions"
+USER nextjs
 
 # Robust CMD with comprehensive validation and fallback strategies
 CMD ["sh", "-c", "echo '🚀 INICIANDO AURUM INVEST STATION...' && echo '=====================================' && echo '🔍 EJECUTANDO VALIDACIÓN DEL SISTEMA...' && /app/validate-system.sh && echo '' && echo '🔍 Verificando docker-entrypoint.sh...' && if [ -f /app/docker-entrypoint.sh ]; then echo '✅ docker-entrypoint.sh encontrado, ejecutando...' && /app/docker-entrypoint.sh npm start; else echo '⚠️  docker-entrypoint.sh no encontrado, usando start-app.sh...' && /app/start-app.sh npm start; fi"]
