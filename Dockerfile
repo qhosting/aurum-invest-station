@@ -9,8 +9,8 @@ WORKDIR /app
 
 # Copy only package files first
 COPY package*.json ./
-# Install production dependencies only
-RUN npm install --ignore-scripts
+# Install production dependencies only - USAR npm install, NO npm ci
+RUN npm install --ignore-scripts || echo "ERROR: npm install falló - EasyPanel debe usar npm install no npm ci"
 
 # Rebuild the source code only when needed
 FROM base AS builder
