@@ -1,5 +1,6 @@
-# Dockerfile ultra-optimizado para EasyPanel - EMERGENCY DEPLOY: CMD ROBUSTO ACTIVO
+# Dockerfile ultra-optimizado para EasyPanel - EMERGENCY DEPLOY 2025-12-09 14:47:33
 # ALL BACKUP SCRIPTS READY - validate-system.sh, start-app.sh, repair-system.sh
+# CRITICAL FIX: package-lock.json added + CMD robust with conditional checks
 FROM node:18-alpine AS base
 
 # Install dependencies only when needed
