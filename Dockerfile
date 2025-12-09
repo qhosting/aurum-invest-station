@@ -1,4 +1,4 @@
-# Dockerfile ultra-optimizado para EasyPanel - PERMISSION FIX APPLIED - READY FOR DEPLOYMENT
+# Dockerfile ultra-optimizado para EasyPanel - ALL BACKUP SCRIPTS READY
 FROM node:18-alpine AS base
 
 # Install dependencies only when needed
