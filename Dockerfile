@@ -60,15 +60,34 @@ RUN chown -R nextjs:nodejs /app
 
 # Make docker-entrypoint.sh executable with extensive validation
 USER root
-RUN [ -f /app/docker-entrypoint.sh ] && echo "✅ docker-entrypoint.sh found" || echo "❌ docker-entrypoint.sh NOT found"
-RUN [ -f /app/docker-entrypoint.sh ] && file /app/docker-entrypoint.sh || true
-RUN chmod +x /app/docker-entrypoint.sh
-RUN ls -la /app/docker-entrypoint.sh
+# Validación exhaustiva del archivo docker-entrypoint.sh
+RUN echo "🔍 VALIDACIÓN EXHAUSTIVA DE DOCKER-ENTRYPOINT.SH:" && \
+    ls -la /app/ | grep docker-entrypoint && \
+    if [ -f /app/docker-entrypoint.sh ]; then \
+        echo "✅ docker-entrypoint.sh found at /app/docker-entrypoint.sh"; \
+        file /app/docker-entrypoint.sh; \
+        chmod +x /app/docker-entrypoint.sh; \
+        echo "✅ Permisos aplicados: $(ls -la /app/docker-entrypoint.sh)"; \
+    else \
+        echo "❌ docker-entrypoint.sh NOT found at /app/docker-entrypoint.sh"; \
+        echo "📋 Contenido de /app:"; \
+        ls -la /app/; \
+    fi
+
+# Copy robust startup script as backup
+COPY start-app.sh /app/start-app.sh
+RUN chmod +x /app/start-app.sh
+RUN echo "✅ Backup script start-app.sh created"
+
 USER nextjs
 
 EXPOSE 3000
 ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
 
-# Use absolute path for docker-entrypoint.sh with validation
-CMD ["sh", "-c", "[ -f /app/docker-entrypoint.sh ] && /app/docker-entrypoint.sh npm start || (echo 'ERROR: docker-entrypoint.sh not found' && exit 1)"]
+# Copy validation script
+COPY validate-system.sh /app/validate-system.sh
+RUN chmod +x /app/validate-system.sh
+
+# Robust CMD with comprehensive validation and fallback strategies
+CMD ["sh", "-c", "echo '🚀 INICIANDO AURUM INVEST STATION...' && echo '=====================================' && echo '🔍 EJECUTANDO VALIDACIÓN DEL SISTEMA...' && /app/validate-system.sh && echo '' && echo '🔍 Verificando docker-entrypoint.sh...' && if [ -f /app/docker-entrypoint.sh ]; then echo '✅ docker-entrypoint.sh encontrado, ejecutando...' && /app/docker-entrypoint.sh npm start; else echo '⚠️  docker-entrypoint.sh no encontrado, usando start-app.sh...' && /app/start-app.sh npm start; fi"]

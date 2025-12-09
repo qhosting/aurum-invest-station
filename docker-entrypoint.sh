@@ -1,47 +1,55 @@
 #!/bin/bash
 
-# ===== VALIDACIÓN Y DIAGNÓSTICO COMPLETO =====
-echo "🔍 DIAGNÓSTICO COMPLETO DE DOCKER-ENTRYPOINT.SH"
-echo "=================================================="
+# ===== VALIDACIÓN Y DIAGNÓSTICO ROBUSTO =====
+set -e  # Salir en caso de error
 
-# Validar que el script está en la ubicación correcta
-SCRIPT_PATH="/app/docker-entrypoint.sh"
-echo "🔍 Verificando ubicación del script..."
-echo "Script path: $SCRIPT_PATH"
-echo "Script actual (\$0): $0"
+echo "🔍 DOCKER-ENTRYPOINT.SH - INICIANDO VALIDACIÓN"
+echo "=============================================="
+
+# Información básica del sistema
+echo "📊 INFORMACIÓN DEL SISTEMA:"
+echo "Directorio actual: $(pwd)"
+echo "Usuario actual: $(whoami)"
 echo "PID: $$"
+echo "Script ejecutado: $0"
+
+# Función para logging con timestamp
+log() {
+    echo "[$(date +'%Y-%m-%d %H:%M:%S')] $1"
+}
+
+# Validar ubicación del script
+SCRIPT_PATH="/app/docker-entrypoint.sh"
+log "Verificando ubicación del script: $SCRIPT_PATH"
 
 if [ ! -f "$SCRIPT_PATH" ]; then
-    echo "❌ ERROR CRÍTICO: $SCRIPT_PATH no encontrado!"
-    echo "📁 Directorio actual: $(pwd)"
-    echo "📋 Contenido de /app:"
-    ls -la /app/ 2>/dev/null || echo "❌ No se puede acceder a /app"
-    echo "🔍 Buscando docker-entrypoint.sh en todo el sistema:"
-    find / -name "docker-entrypoint.sh" -type f 2>/dev/null || echo "❌ No encontrado"
-    echo "❌ ABORTANDO EJECUCIÓN - Archivo no encontrado"
+    log "❌ ERROR CRÍTICO: $SCRIPT_PATH no encontrado!"
+    log "📁 Contenido de /app:"
+    ls -la /app/ 2>/dev/null || log "❌ No se puede acceder a /app"
+    log "🔍 Buscando docker-entrypoint.sh en todo el sistema:"
+    find / -name "docker-entrypoint.sh" -type f 2>/dev/null | head -5 || log "❌ No encontrado"
+    log "❌ ABORTANDO EJECUCIÓN"
     exit 1
 fi
 
-echo "✅ Script encontrado en: $SCRIPT_PATH"
-echo "📊 Permisos del archivo:"
-ls -la "$SCRIPT_PATH"
+log "✅ Script encontrado: $SCRIPT_PATH"
+log "📊 Permisos: $(ls -la "$SCRIPT_PATH")"
 
-# Verificar que es ejecutable
+# Asegurar permisos ejecutables
 if [ ! -x "$SCRIPT_PATH" ]; then
-    echo "⚠️  Script no es ejecutable, aplicando permisos..."
+    log "⚠️  Aplicando permisos ejecutables..."
     chmod +x "$SCRIPT_PATH"
-    echo "✅ Permisos aplicados: $(ls -la "$SCRIPT_PATH")"
+    log "✅ Permisos aplicados: $(ls -la "$SCRIPT_PATH")"
 fi
 
 # Verificar variables de entorno críticas
-echo "🔍 Variables de entorno:"
-echo "NODE_ENV: ${NODE_ENV:-'NO DEFINIDA'}"
-echo "DATABASE_URL: ${DATABASE_URL:0:30}..."
-echo "NEXTAUTH_URL: ${NEXTAUTH_URL:-'NO DEFINIDA'}"
-echo "PORT: ${PORT:-'NO DEFINIDA'}"
+log "🔍 Variables de entorno:"
+log "NODE_ENV: ${NODE_ENV:-'NO DEFINIDA'}"
+log "DATABASE_URL: ${DATABASE_URL:0:50}..."
+log "NEXTAUTH_URL: ${NEXTAUTH_URL:-'NO DEFINIDA'}"
+log "PORT: ${PORT:-'NO DEFINIDA'}"
 
-# Script de inicialización automática para AURUM INVEST STATION
-echo "🚀 Iniciando AURUM INVEST STATION..."
+log "🚀 Iniciando AURUM INVEST STATION..."
 
 # ===== VALIDACIONES DE DIAGNÓSTICO =====
 echo "🔍 DIAGNÓSTICO DEL ENTORNO:"
