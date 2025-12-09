@@ -1,5 +1,5 @@
-# Dockerfile ultra-optimizado para EasyPanel - EMERGENCY DEPLOY 2025-12-09 14:51:26 - SYNC FORCED
-# FORZAR SINCRONIZACIÓN CON GITHUB - EasyPanel debe detectar este commit inmediatamente
+# Dockerfile ultra-optimizado para EasyPanel - FORCED DEPLOY 2025-12-10 05:42:49 - CRITICAL SYNC
+# ⚠️ EASYPANEL MUST DETECT THIS COMMIT ⚠️ - validate-system.sh fix + network resilience
 # ALL BACKUP SCRIPTS READY - validate-system.sh, start-app.sh, repair-system.sh
 # CRITICAL FIX: package-lock.json added + CMD robust with conditional checks
 FROM node:18-alpine AS base
