@@ -1,130 +1,125 @@
 #!/bin/bash
 
-# ===== VALIDACIÓN Y DIAGNÓSTICO ROBUSTO =====
-set -e  # Salir en caso de error
+# VALIDATION AND ROBUST DIAGNOSTICS
+set -e
 
-echo "🔍 DOCKER-ENTRYPOINT.SH - INICIANDO VALIDACIÓN"
-echo "=============================================="
+echo "DOCKER-ENTRYPOINT.SH - STARTING VALIDATION"
+echo "=========================================="
 
-# Información básica del sistema
-echo "📊 INFORMACIÓN DEL SISTEMA:"
-echo "Directorio actual: $(pwd)"
-echo "Usuario actual: $(whoami)"
+# Basic system information
+echo "SYSTEM INFO:"
+echo "Current directory: $(pwd)"
+echo "Current user: $(whoami)"
 echo "PID: $$"
-echo "Script ejecutado: $0"
+echo "Script executed: $0"
 
-# Función para logging con timestamp
+# Function for logging with timestamp
 log() {
     echo "[$(date +'%Y-%m-%d %H:%M:%S')] $1"
 }
 
-# Validar ubicación del script
+# Validate script location
 SCRIPT_PATH="/app/docker-entrypoint.sh"
-log "Verificando ubicación del script: $SCRIPT_PATH"
+log "Verifying script location: $SCRIPT_PATH"
 
 if [ ! -f "$SCRIPT_PATH" ]; then
-    log "❌ ERROR CRÍTICO: $SCRIPT_PATH no encontrado!"
-    log "📁 Contenido de /app:"
-    ls -la /app/ 2>/dev/null || log "❌ No se puede acceder a /app"
-    log "🔍 Buscando docker-entrypoint.sh en todo el sistema:"
-    find / -name "docker-entrypoint.sh" -type f 2>/dev/null | head -5 || log "❌ No encontrado"
-    log "❌ ABORTANDO EJECUCIÓN"
+    log "ERROR: $SCRIPT_PATH not found!"
+    log "Content of /app:"
+    ls -la /app/ 2>/dev/null || log "Cannot access /app"
+    log "Searching for docker-entrypoint.sh in the system:"
+    find / -name "docker-entrypoint.sh" -type f 2>/dev/null | head -5 || log "Not found"
+    log "ABORTING EXECUTION"
     exit 1
 fi
 
-log "✅ Script encontrado: $SCRIPT_PATH"
-log "📊 Permisos: $(ls -la "$SCRIPT_PATH")"
+log "Script found: $SCRIPT_PATH"
+log "Permissions: $(ls -la "$SCRIPT_PATH")"
 
-# Asegurar permisos ejecutables
+# Ensure executable permissions
 if [ ! -x "$SCRIPT_PATH" ]; then
-    log "⚠️  Aplicando permisos ejecutables..."
+    log "Applying executable permissions..."
     chmod +x "$SCRIPT_PATH"
-    log "✅ Permisos aplicados: $(ls -la "$SCRIPT_PATH")"
+    log "Permissions applied: $(ls -la "$SCRIPT_PATH")"
 fi
 
-# Verificar variables de entorno críticas
-log "🔍 Variables de entorno:"
-log "NODE_ENV: ${NODE_ENV:-'NO DEFINIDA'}"
+# Check critical environment variables
+log "Environment variables:"
+log "NODE_ENV: ${NODE_ENV:-'NOT DEFINED'}"
 log "DATABASE_URL: ${DATABASE_URL:0:50}..."
-log "NEXTAUTH_URL: ${NEXTAUTH_URL:-'NO DEFINIDA'}"
-log "PORT: ${PORT:-'NO DEFINIDA'}"
+log "NEXTAUTH_URL: ${NEXTAUTH_URL:-'NOT DEFINED'}"
+log "PORT: ${PORT:-'NOT DEFINED'}"
 
-log "🚀 Iniciando AURUM INVEST STATION..."
+log "Starting AURUM INVEST STATION..."
 
-# ===== VALIDACIONES DE DIAGNÓSTICO =====
-echo "🔍 DIAGNÓSTICO DEL ENTORNO:"
-echo "📁 Directorio actual: $(pwd)"
-echo "📋 Usuario actual: $(whoami)"
-echo "🔢 PID actual: $$"
-echo "📋 Argumentos recibidos: $@"
-echo "🔍 Verificando ubicación de docker-entrypoint.sh..."
+# ENVIRONMENT DIAGNOSTICS
+echo "ENVIRONMENT DIAGNOSTICS:"
+echo "Current directory: $(pwd)"
+echo "Current user: $(whoami)"
+echo "Current PID: $$"
+echo "Arguments received: $@"
+echo "Verifying docker-entrypoint.sh location..."
 
-# Verificar que el archivo actual existe
+# Verify that the current file exists
 if [ -f "/app/docker-entrypoint.sh" ]; then
-    echo "✅ /app/docker-entrypoint.sh existe"
-    echo "📊 Permisos: $(ls -la /app/docker-entrypoint.sh)"
+    echo "SUCCESS: /app/docker-entrypoint.sh exists"
+    echo "Permissions: $(ls -la /app/docker-entrypoint.sh)"
 else
-    echo "❌ /app/docker-entrypoint.sh NO existe"
-    echo "📁 Contenido de /app:"
+    echo "ERROR: /app/docker-entrypoint.sh NOT found"
+    echo "Content of /app:"
     ls -la /app/
-    echo "🔍 Buscando docker-entrypoint.sh en el sistema..."
-    find /app -name "docker-entrypoint.sh" 2>/dev/null || echo "❌ No encontrado en /app"
-    find / -name "docker-entrypoint.sh" -type f 2>/dev/null | head -5 || echo "❌ No encontrado en todo el sistema"
+    echo "Searching for docker-entrypoint.sh in the system..."
+    find /app -name "docker-entrypoint.sh" 2>/dev/null || echo "Not found in /app"
+    find / -name "docker-entrypoint.sh" -type f 2>/dev/null | head -5 || echo "Not found in entire system"
 fi
 
-# Verificar variables de entorno críticas
-echo "🔍 Variables de entorno:"
+# Check critical environment variables
+echo "Environment variables:"
 echo "NODE_ENV: $NODE_ENV"
 echo "DATABASE_URL: ${DATABASE_URL:0:20}..."
 echo "NEXTAUTH_URL: $NEXTAUTH_URL"
 echo "PORT: $PORT"
 
-# ===== VALIDACIÓN DE UBICACIÓN ACTUAL =====
-echo "🔍 Validando ubicación del script:"
+# LOCATION VALIDATION
+echo "Validating script location:"
 if [ "$0" = "/app/docker-entrypoint.sh" ] || [ "$0" = "./docker-entrypoint.sh" ]; then
-    echo "✅ Script ejecutado desde la ubicación correcta"
+    echo "SUCCESS: Script executed from correct location"
 else
-    echo "⚠️  Script ejecutado desde: $0"
+    echo "WARNING: Script executed from: $0"
 fi
 
-# Función para logging
-log() {
-    echo "[$(date +'%Y-%m-%d %H:%M:%S')] $1"
-}
-
-# Esperar a que PostgreSQL esté disponible con timeout
-log "⏳ Esperando conexión a PostgreSQL..."
+# Wait for PostgreSQL to be available with timeout
+log "Waiting for PostgreSQL connection..."
 timeout=30
 counter=0
 until nc -z postgres 5432; do
     sleep 2
     counter=$((counter + 2))
-    log "⏳ Esperando PostgreSQL... ($counter/$timeout segundos)"
+    log "Waiting for PostgreSQL... ($counter/$timeout seconds)"
     if [ $counter -ge $timeout ]; then
-        log "⚠️  Timeout esperando PostgreSQL, continuando..."
+        log "Timeout waiting for PostgreSQL, continuing..."
         break
     fi
 done
-log "✅ PostgreSQL verificado"
+log "PostgreSQL verified"
 
-# Ejecutar migraciones de Prisma con timeout
-log "🗄️  Ejecutando migraciones de base de datos..."
+# Run Prisma migrations with timeout
+log "Running database migrations..."
 if timeout 60 npx prisma migrate deploy; then
-    log "✅ Migraciones completadas exitosamente"
+    log "Migrations completed successfully"
 else
-    log "⚠️  Migraciones completadas con advertencias"
+    log "Migrations completed with warnings"
 fi
 
-# Ejecutar seeding de datos con timeout
-log "🌱 Ejecutando seeding de datos..."
+# Run data seeding with timeout
+log "Running data seeding..."
 if timeout 30 npx tsx prisma/seed.ts; then
-    log "✅ Seeding completado exitosamente"
+    log "Seeding completed successfully"
 else
-    log "⚠️  Seeding completado con advertencias"
+    log "Seeding completed with warnings"
 fi
 
-log "✅ Inicialización completada!"
-log "🎯 AURUM INVEST STATION listo para recibir conexiones"
+log "Initialization completed!"
+log "AURUM INVEST STATION ready for connections"
 
-# Iniciar la aplicación
+# Start the application
 exec "$@"
