@@ -35,8 +35,11 @@ export function ChatwootWidget() {
     const chatwootToken = process.env.NEXT_PUBLIC_CHATWOOT_TOKEN
     const chatwootBaseUrl = process.env.NEXT_PUBLIC_CHATWOOT_BASE_URL
 
-    if (!chatwootToken || !chatwootBaseUrl) {
-      console.warn("Chatwoot configuration missing")
+    // Skip if Chatwoot is not configured or if URL is demo/placeholder
+    if (!chatwootToken || !chatwootBaseUrl || 
+        chatwootBaseUrl.includes('demo') || 
+        chatwootToken.includes('demo')) {
+      console.info("Chatwoot widget disabled (not configured)")
       return
     }
 
@@ -46,28 +49,31 @@ export function ChatwootWidget() {
       script.async = true
       script.src = `${chatwootBaseUrl}/packs/js/sdk.js`
       script.onload = () => {
+        try {
+          if (window.chatwootSDK) {
+            window.chatwootSDK.run({
+              websiteToken: chatwootToken,
+              baseUrl: chatwootBaseUrl,
+            })
+          }
+        } catch (error) {
+          console.error("Failed to initialize Chatwoot:", error)
+        }
+      }
+      script.onerror = () => {
+        console.warn("Failed to load Chatwoot SDK")
+      }
+      document.head.appendChild(script)
+    } else if (window.chatwootSDK && window.$chatwoot) {
+      // SDK already loaded, just initialize
+      try {
         window.chatwootSDK.run({
           websiteToken: chatwootToken,
           baseUrl: chatwootBaseUrl,
         })
+      } catch (error) {
+        console.error("Failed to initialize Chatwoot:", error)
       }
-      document.head.appendChild(script)
-
-      // Initialize Chatwoot
-      window.$chatwoot.run({
-        websiteToken: chatwootToken,
-        baseUrl: chatwootBaseUrl,
-      })
-    } else if (window.chatwootSDK) {
-      // SDK already loaded, just initialize
-      window.chatwootSDK.run({
-        websiteToken: chatwootToken,
-        baseUrl: chatwootBaseUrl,
-      })
-      window.$chatwoot.run({
-        websiteToken: chatwootToken,
-        baseUrl: chatwootBaseUrl,
-      })
     }
   }, [])
 
@@ -76,19 +82,24 @@ export function ChatwootWidget() {
     if (status === "authenticated" && session?.user) {
       const chatwootToken = process.env.NEXT_PUBLIC_CHATWOOT_TOKEN
 
-      if (chatwootToken && window.$chatwoot) {
-        // Set user identity
-        window.$chatwoot.setUser(session.user.id, {
-          email: session.user.email!,
-          name: session.user.name!,
-        })
+      if (chatwootToken && window.$chatwoot && 
+          !chatwootToken.includes('demo')) {
+        try {
+          // Set user identity
+          window.$chatwoot.setUser(session.user.id, {
+            email: session.user.email!,
+            name: session.user.name!,
+          })
 
-        // Set custom attributes including role
-        window.$chatwoot.setCustomAttributes({
-          role: session.user.role,
-          apiKey: session.user.apiKey,
-          plan: "premium", // You can set actual plan based on user subscription
-        })
+          // Set custom attributes including role
+          window.$chatwoot.setCustomAttributes({
+            role: session.user.role,
+            apiKey: session.user.apiKey,
+            plan: "premium", // You can set actual plan based on user subscription
+          })
+        } catch (error) {
+          console.error("Failed to set Chatwoot user:", error)
+        }
       }
     }
   }, [status, session])

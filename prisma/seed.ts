@@ -83,8 +83,6 @@ async function main() {
     profit: number | null;
     status: TradeStatus;
     setup: string;
-    openedAt: Date;
-    closedAt: Date | null;
   }> = [
     {
       userId: adminUser.id,
@@ -98,8 +96,6 @@ async function main() {
       profit: 70.00,
       status: TradeStatus.CLOSED,
       setup: 'AURUM V33',
-      openedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-      closedAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
     },
     {
       userId: adminUser.id,
@@ -113,8 +109,6 @@ async function main() {
       profit: 35.00,
       status: TradeStatus.CLOSED,
       setup: 'AURUM Scalping',
-      openedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-      closedAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
     },
     {
       userId: adminUser.id,
@@ -128,8 +122,6 @@ async function main() {
       profit: null,
       status: TradeStatus.OPEN,
       setup: 'AURUM Gold Strategy',
-      openedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-      closedAt: null,
     },
   ];
 
