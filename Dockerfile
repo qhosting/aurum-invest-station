@@ -31,7 +31,19 @@ COPY --from=deps /app/node_modules ./node_modules
 # Copy all source files including prisma
 COPY . .
 
-# No fix needed - using original files from repository
+# FIX: Resolve naming conflicts before build
+RUN echo "🔧 FIXING NAMING CONFLICTS..." && \
+    find src/ -name "*.tsx" -o -name "*.ts" | while read file; do \
+        if grep -q "Terminal" "$file" 2>/dev/null; then \
+            if grep -q "import.*Terminal.*from 'lucide-react'" "$file" && grep -q "function Terminal" "$file"; then \
+                echo "⚠️ Fixing Terminal conflict in $file"; \
+                sed -i 's/import { \([^,]*\), *Terminal, *\([^}]*\) } from '\''lucide-react'\''/import { \1, TerminalIcon, \2 } from '\''lucide-react'\''/g' "$file"; \
+                sed -i 's/import { Terminal } from '\''lucide-react'\''/import { TerminalIcon } from '\''lucide-react'\''/g' "$file"; \
+                sed -i 's/Terminal,/TerminalIcon,/g' "$file"; \
+                sed -i 's/Terminal\}/TerminalIcon\}/g' "$file"; \
+            fi; \
+        fi; \
+    done || echo "No conflicts found"
 
 # Set Node.js path resolution environment variables for Docker
 ENV NODE_PATH=/app/node_modules:/app/src
