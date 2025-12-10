@@ -29,8 +29,8 @@ build_with_retry() {
         npm config set fetch-retry-maxtimeout 120000  # 2 minutos
         npm config set fetch-retries 5
         
-        # Intentar el build
-        if timeout 300 npm run build; then  # Timeout total de 5 minutos
+        # Intentar el build (llamar directamente a next build para evitar recursión)
+        if timeout 300 npx next build; then  # Timeout total de 5 minutos
             log "✅ Build completado exitosamente!"
             return 0
         else

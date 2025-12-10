@@ -52,11 +52,16 @@ ENV TS_NODE_TRANSPILE_ONLY=1
 # Generate Prisma client explicitly
 RUN npx prisma generate
 
-# Build the application with default values for environment variables during build
-# Use dummy values for build time to avoid DATABASE_URL errors
-ENV DATABASE_URL="postgresql://postgres:postgres@localhost:5432/build"
-ENV NEXTAUTH_SECRET="dummy-secret-for-build"
-ENV NEXTAUTH_URL="http://localhost:3000"
+# Build arguments for secrets (can be overridden during build)
+# ⚠️ WARNING: These are ONLY for build time, real values must be provided at runtime
+ARG BUILD_DATABASE_URL="postgresql://postgres:postgres@localhost:5432/build"
+ARG BUILD_NEXTAUTH_SECRET="build-time-placeholder-change-at-runtime"
+ARG BUILD_NEXTAUTH_URL="http://localhost:3000"
+
+# Set build-time environment variables (will be overridden at runtime)
+ENV DATABASE_URL=$BUILD_DATABASE_URL
+ENV NEXTAUTH_SECRET=$BUILD_NEXTAUTH_SECRET
+ENV NEXTAUTH_URL=$BUILD_NEXTAUTH_URL
 
 # Build the application
 RUN npm run build
@@ -65,7 +70,7 @@ RUN npm run build
 FROM base AS runner
 WORKDIR /app
 
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
@@ -105,8 +110,8 @@ RUN chmod +x /app/repair-system.sh || echo "⚠️  chmod failed - repair script
 USER nextjs
 
 EXPOSE 3000
-ENV PORT 3000
-ENV HOSTNAME "0.0.0.0"
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
 
 # Copy validation script - CLEAN COPY
 USER root
