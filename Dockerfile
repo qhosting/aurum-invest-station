@@ -72,6 +72,9 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
+# Install netcat for database connection testing in entrypoint
+RUN apk add --no-cache netcat-openbsd
+
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 

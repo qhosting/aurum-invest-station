@@ -1,125 +1,153 @@
 #!/bin/bash
 
-# VALIDATION AND ROBUST DIAGNOSTICS
+# ========================================
+# AURUM INVEST STATION - Docker Entrypoint
+# Configuración robusta con troubleshooting mejorado
+# ========================================
+
 set -e
-
-echo "DOCKER-ENTRYPOINT.SH - STARTING VALIDATION"
-echo "=========================================="
-
-# Basic system information
-echo "SYSTEM INFO:"
-echo "Current directory: $(pwd)"
-echo "Current user: $(whoami)"
-echo "PID: $$"
-echo "Script executed: $0"
 
 # Function for logging with timestamp
 log() {
     echo "[$(date +'%Y-%m-%d %H:%M:%S')] $1"
 }
 
-# Validate script location
-SCRIPT_PATH="/app/docker-entrypoint.sh"
-log "Verifying script location: $SCRIPT_PATH"
+log "=========================================="
+log "AURUM INVEST STATION - INICIANDO"
+log "=========================================="
 
-if [ ! -f "$SCRIPT_PATH" ]; then
-    log "ERROR: $SCRIPT_PATH not found!"
-    log "Content of /app:"
-    ls -la /app/ 2>/dev/null || log "Cannot access /app"
-    log "Searching for docker-entrypoint.sh in the system:"
-    find / -name "docker-entrypoint.sh" -type f 2>/dev/null | head -5 || log "Not found"
-    log "ABORTING EXECUTION"
-    exit 1
-fi
-
-log "Script found: $SCRIPT_PATH"
-log "Permissions: $(ls -la "$SCRIPT_PATH")"
-
-# Ensure executable permissions
-if [ ! -x "$SCRIPT_PATH" ]; then
-    log "Applying executable permissions..."
-    chmod +x "$SCRIPT_PATH"
-    log "Permissions applied: $(ls -la "$SCRIPT_PATH")"
-fi
+# System information
+log "INFORMACIÓN DEL SISTEMA:"
+log "  Directorio actual: $(pwd)"
+log "  Usuario: $(whoami)"
+log "  PID: $$"
+log "  Node version: $(node --version 2>/dev/null || echo 'N/A')"
+log "  npm version: $(npm --version 2>/dev/null || echo 'N/A')"
 
 # Check critical environment variables
-log "Environment variables:"
-log "NODE_ENV: ${NODE_ENV:-'NOT DEFINED'}"
-log "DATABASE_URL: ${DATABASE_URL:0:50}..."
-log "NEXTAUTH_URL: ${NEXTAUTH_URL:-'NOT DEFINED'}"
-log "PORT: ${PORT:-'NOT DEFINED'}"
+log ""
+log "VARIABLES DE ENTORNO CRÍTICAS:"
+log "  NODE_ENV: ${NODE_ENV:-'NOT SET'}"
+log "  PORT: ${PORT:-3000}"
+log "  NEXTAUTH_URL: ${NEXTAUTH_URL:-'NOT SET'}"
 
-log "Starting AURUM INVEST STATION..."
-
-# ENVIRONMENT DIAGNOSTICS
-echo "ENVIRONMENT DIAGNOSTICS:"
-echo "Current directory: $(pwd)"
-echo "Current user: $(whoami)"
-echo "Current PID: $$"
-echo "Arguments received: $@"
-echo "Verifying docker-entrypoint.sh location..."
-
-# Verify that the current file exists
-if [ -f "/app/docker-entrypoint.sh" ]; then
-    echo "SUCCESS: /app/docker-entrypoint.sh exists"
-    echo "Permissions: $(ls -la /app/docker-entrypoint.sh)"
+# Database URL parsing (extract host and port from DATABASE_URL)
+if [ -n "$DATABASE_URL" ]; then
+    log "  DATABASE_URL: ${DATABASE_URL:0:30}... [REDACTED]"
+    
+    # Extract database host and port from DATABASE_URL
+    # Format: postgresql://user:pass@host:port/dbname
+    DB_HOST=$(echo "$DATABASE_URL" | sed -n 's/.*@\([^:]*\):.*/\1/p')
+    DB_PORT=$(echo "$DATABASE_URL" | sed -n 's/.*:\([0-9]*\)\/.*/\1/p')
+    
+    log "  Parsed DB Host: ${DB_HOST:-'localhost'}"
+    log "  Parsed DB Port: ${DB_PORT:-5432}"
 else
-    echo "ERROR: /app/docker-entrypoint.sh NOT found"
-    echo "Content of /app:"
-    ls -la /app/
-    echo "Searching for docker-entrypoint.sh in the system..."
-    find /app -name "docker-entrypoint.sh" 2>/dev/null || echo "Not found in /app"
-    find / -name "docker-entrypoint.sh" -type f 2>/dev/null | head -5 || echo "Not found in entire system"
+    log "  DATABASE_URL: NOT SET - La aplicación fallará al iniciar"
+    log "  ⚠️  ADVERTENCIA: DATABASE_URL es requerido"
+    DB_HOST="localhost"
+    DB_PORT="5432"
 fi
 
-# Check critical environment variables
-echo "Environment variables:"
-echo "NODE_ENV: $NODE_ENV"
-echo "DATABASE_URL: ${DATABASE_URL:0:20}..."
-echo "NEXTAUTH_URL: $NEXTAUTH_URL"
-echo "PORT: $PORT"
-
-# LOCATION VALIDATION
-echo "Validating script location:"
-if [ "$0" = "/app/docker-entrypoint.sh" ] || [ "$0" = "./docker-entrypoint.sh" ]; then
-    echo "SUCCESS: Script executed from correct location"
-else
-    echo "WARNING: Script executed from: $0"
+# Install netcat if not available (for database connection testing)
+if ! command -v nc &> /dev/null; then
+    log "Instalando netcat para pruebas de conexión..."
+    apk add --no-cache netcat-openbsd 2>/dev/null || log "No se pudo instalar netcat"
 fi
 
-# Wait for PostgreSQL to be available with timeout
-log "Waiting for PostgreSQL connection..."
-timeout=30
-counter=0
-until nc -z postgres 5432; do
-    sleep 2
-    counter=$((counter + 2))
-    log "Waiting for PostgreSQL... ($counter/$timeout seconds)"
-    if [ $counter -ge $timeout ]; then
-        log "Timeout waiting for PostgreSQL, continuing..."
+# Wait for PostgreSQL to be available
+log ""
+log "VERIFICANDO CONEXIÓN A BASE DE DATOS:"
+log "  Esperando conexión a ${DB_HOST}:${DB_PORT}..."
+
+MAX_RETRIES=30
+RETRY_COUNT=0
+CONNECTION_SUCCESS=false
+
+while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+    if nc -z "$DB_HOST" "$DB_PORT" 2>/dev/null; then
+        log "  ✅ Conexión a base de datos establecida"
+        CONNECTION_SUCCESS=true
         break
     fi
+    
+    RETRY_COUNT=$((RETRY_COUNT + 1))
+    log "  Intento $RETRY_COUNT/$MAX_RETRIES - Esperando base de datos..."
+    sleep 2
 done
-log "PostgreSQL verified"
 
-# Run Prisma migrations with timeout
-log "Running database migrations..."
-if timeout 60 npx prisma migrate deploy; then
-    log "Migrations completed successfully"
+if [ "$CONNECTION_SUCCESS" = false ]; then
+    log "  ⚠️  ADVERTENCIA: No se pudo conectar a ${DB_HOST}:${DB_PORT} después de $MAX_RETRIES intentos"
+    log "  La aplicación intentará conectarse pero puede fallar"
+    log ""
+    log "TROUBLESHOOTING:"
+    log "  1. Verifica que DATABASE_URL esté correctamente configurado"
+    log "  2. Asegúrate de que el servicio de PostgreSQL esté corriendo"
+    log "  3. Verifica la conectividad de red entre contenedores"
+    log "  4. Revisa los logs del contenedor de PostgreSQL"
 else
-    log "Migrations completed with warnings"
+    log "  Base de datos accesible - Continuando..."
 fi
 
-# Run data seeding with timeout
-log "Running data seeding..."
-if timeout 30 npx tsx prisma/seed.ts; then
-    log "Seeding completed successfully"
+# Run Prisma migrations
+log ""
+log "EJECUTANDO MIGRACIONES DE BASE DE DATOS:"
+
+if [ "$CONNECTION_SUCCESS" = true ]; then
+    if timeout 90 npx prisma migrate deploy 2>&1 | tee /tmp/migrate.log; then
+        log "  ✅ Migraciones completadas exitosamente"
+    else
+        EXIT_CODE=${PIPESTATUS[0]}
+        log "  ⚠️  Migraciones completadas con código de salida: $EXIT_CODE"
+        log "  Log de migraciones:"
+        cat /tmp/migrate.log 2>/dev/null || log "  No se pudo leer el log"
+        
+        # Don't exit - let the app try to start
+        log "  Continuando de todas formas..."
+    fi
 else
-    log "Seeding completed with warnings"
+    log "  ⚠️  OMITIENDO migraciones - Base de datos no accesible"
 fi
 
-log "Initialization completed!"
-log "AURUM INVEST STATION ready for connections"
+# Run data seeding (optional - may fail if data already exists)
+log ""
+log "EJECUTANDO SEED DE DATOS:"
 
-# Start the application
+if [ "$CONNECTION_SUCCESS" = true ]; then
+    if timeout 60 npx tsx prisma/seed.ts 2>&1 | tee /tmp/seed.log; then
+        log "  ✅ Seed completado exitosamente"
+    else
+        EXIT_CODE=${PIPESTATUS[0]}
+        log "  ℹ️  Seed completado con código de salida: $EXIT_CODE"
+        log "  (Esto es normal si los datos ya existen)"
+        
+        # Check if it's just a duplicate key error (expected)
+        if grep -q "Unique constraint" /tmp/seed.log 2>/dev/null; then
+            log "  Los datos ya existen - esto es normal"
+        fi
+    fi
+else
+    log "  ⚠️  OMITIENDO seed - Base de datos no accesible"
+fi
+
+# Final status
+log ""
+log "=========================================="
+log "INICIALIZACIÓN COMPLETADA"
+log "=========================================="
+log "Estado de la aplicación:"
+log "  - Conexión DB: $([ "$CONNECTION_SUCCESS" = true ] && echo '✅ OK' || echo '❌ FALLO')"
+log "  - Migraciones: $([ -f /tmp/migrate.log ] && echo '✅ Ejecutadas' || echo '⚠️  Omitidas')"
+log "  - Seed: $([ -f /tmp/seed.log ] && echo '✅ Ejecutado' || echo '⚠️  Omitido')"
+log ""
+log "Iniciando aplicación Next.js..."
+log "La aplicación estará disponible en http://0.0.0.0:${PORT:-3000}"
+log ""
+log "Para ver logs en tiempo real:"
+log "  docker logs -f <container_id>"
+log ""
+log "=========================================="
+
+# Start the application (this will replace the current process)
+# Any logs after this point will come from the Next.js application
 exec "$@"
