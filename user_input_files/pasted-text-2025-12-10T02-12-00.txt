@@ -1,0 +1,204 @@
+Commit: 🚨 CRITICAL FIX: Shell syntax error resolved - Clean docker-entrypoint.sh without UTF-8 characters
+
+- Removed problematic UTF-8 multibyte characters causing 'sh: syntax error: unexpected fi'
+- Created clean version without special characters
+- All shell syntax validated and confirmed correct
+- This should resolve the EasyPanel deployment shell syntax error 
+##########################################
+### Download Github Archive Started...
+### Wed, 10 Dec 2025 02:05:17 GMT
+##########################################
+
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 3.95kB done
+#1 DONE 0.1s
+
+#2 [internal] load metadata for docker.io/library/node:18-alpine
+#2 DONE 1.1s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.1s
+
+#4 [internal] load build context
+#4 DONE 0.0s
+
+#5 [base 1/1] FROM docker.io/library/node:18-alpine@sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e
+#5 resolve docker.io/library/node:18-alpine@sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e 0.1s done
+#5 DONE 0.1s
+
+#4 [internal] load build context
+#4 transferring context: 1.14MB 0.1s done
+#4 DONE 0.3s
+
+#5 [base 1/1] FROM docker.io/library/node:18-alpine@sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e
+#5 DONE 0.6s
+
+#6 [deps 1/4] RUN apk add --no-cache libc6-compat
+#6 ...
+
+#7 [builder 1/5] WORKDIR /app
+#7 DONE 0.3s
+
+#8 [runner  2/16] RUN addgroup --system --gid 1001 nodejs
+#8 DONE 1.1s
+
+#6 [deps 1/4] RUN apk add --no-cache libc6-compat
+#6 0.657 fetch https://dl-cdn.alpinelinux.org/alpine/v3.21/main/x86_64/APKINDEX.tar.gz
+#6 0.970 fetch https://dl-cdn.alpinelinux.org/alpine/v3.21/community/x86_64/APKINDEX.tar.gz
+#6 2.092 (1/3) Installing musl-obstack (1.2.3-r2)
+#6 2.127 (2/3) Installing libucontext (1.3.2-r0)
+#6 2.134 (3/3) Installing gcompat (1.1.0-r4)
+#6 2.178 OK: 10 MiB in 20 packages
+#6 ...
+
+#9 [runner  3/16] RUN adduser --system --uid 1001 nextjs
+#9 DONE 1.1s
+
+#6 [deps 1/4] RUN apk add --no-cache libc6-compat
+#6 DONE 2.9s
+
+#10 [deps 2/4] WORKDIR /app
+#10 DONE 0.3s
+
+#11 [deps 3/4] COPY package*.json ./
+#11 DONE 0.5s
+
+#12 [deps 4/4] RUN npm config set fetch-timeout 600000 &&     npm config set fetch-retries 5 &&     npm config set fetch-retry-mintimeout 20000 &&     npm config set fetch-retry-maxtimeout 120000 &&     npm install --prefer-offline --ignore-scripts ||     (echo "ERROR: npm install falló - Intentando con configuración alternativa..." &&      npm install --no-optional --ignore-scripts --legacy-peer-deps) ||     echo "ERROR: npm install falló completamente - revisar conectividad de red"
+#12 96.63 npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+#12 100.9 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+#12 103.3 npm warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
+#12 104.4 npm warn deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead
+#12 106.6 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+#12 115.2 npm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+#12 163.4 
+#12 163.4 added 577 packages, and audited 578 packages in 3m
+#12 163.4 
+#12 163.4 165 packages are looking for funding
+#12 163.4   run `npm fund` for details
+#12 163.7 
+#12 163.7 4 vulnerabilities (3 high, 1 critical)
+#12 163.7 
+#12 163.7 To address all issues (including breaking changes), run:
+#12 163.7   npm audit fix --force
+#12 163.7 
+#12 163.7 Run `npm audit` for details.
+#12 DONE 164.7s
+
+#13 [builder 2/5] COPY --from=deps /app/node_modules ./node_modules
+#13 DONE 18.8s
+
+#14 [builder 3/5] COPY . .
+#14 DONE 1.4s
+
+#15 [builder 4/5] RUN npx prisma generate
+#15 1.846 npm error config prefix cannot be changed from project config: /app/.npmrc.
+#15 7.107 warn The configuration property `package.json#prisma` is deprecated and will be removed in Prisma 7. Please migrate to a Prisma config file (e.g., `prisma.config.ts`).
+#15 7.107 For more information, see: https://pris.ly/prisma-config
+#15 7.107 
+#15 10.29 Prisma schema loaded from prisma/schema.prisma
+#15 11.67 
+#15 11.67 ✔ Generated Prisma Client (v6.19.0) to ./node_modules/@prisma/client in 582ms
+#15 11.67 
+#15 11.67 Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+#15 11.67 
+#15 11.67 Tip: Need your database queries to be 1000x faster? Accelerate offers you that and more: https://pris.ly/tip-2-accelerate
+#15 11.67 
+#15 11.79 npm notice
+#15 11.79 npm notice New major version of npm available! 10.8.2 -> 11.7.0
+#15 11.79 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.7.0
+#15 11.79 npm notice To update run: npm install -g npm@11.7.0
+#15 11.79 npm notice
+#15 DONE 12.0s
+
+#16 [builder 5/5] RUN npm run build
+#16 0.772 npm error config prefix cannot be changed from project config: /app/.npmrc.
+#16 0.941 
+#16 0.941 > aurum-invest-station@1.0.0 build
+#16 0.941 > prisma generate && next build
+#16 0.941 
+#16 3.902 warn The configuration property `package.json#prisma` is deprecated and will be removed in Prisma 7. Please migrate to a Prisma config file (e.g., `prisma.config.ts`).
+#16 3.902 For more information, see: https://pris.ly/prisma-config
+#16 3.902 
+#16 4.425 Prisma schema loaded from prisma/schema.prisma
+#16 5.194 ┌─────────────────────────────────────────────────────────┐
+#16 5.194 │  Update available 6.19.0 -> 7.1.0                       │
+#16 5.194 │                                                         │
+#16 5.194 │  This is a major update - please follow the guide at    │
+#16 5.194 │  https://pris.ly/d/major-version-upgrade                │
+#16 5.194 │                                                         │
+#16 5.194 │  Run the following to update                            │
+#16 5.194 │    npm i --save-dev prisma@latest                       │
+#16 5.194 │    npm i @prisma/client@latest                          │
+#16 5.194 └─────────────────────────────────────────────────────────┘
+#16 5.196 
+#16 5.196 ✔ Generated Prisma Client (v6.19.0) to ./node_modules/@prisma/client in 317ms
+#16 5.196 
+#16 5.196 Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+#16 5.196 
+#16 5.196 Tip: Need your database queries to be 1000x faster? Accelerate offers you that and more: https://pris.ly/tip-2-accelerate
+#16 5.196 
+#16 7.006 Attention: Next.js now collects completely anonymous telemetry regarding usage.
+#16 7.006 This information is used to shape Next.js' roadmap and prioritize features.
+#16 7.006 You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+#16 7.006 https://nextjs.org/telemetry
+#16 7.006 
+#16 7.547   ▲ Next.js 14.2.18
+#16 7.548 
+#16 7.916    Creating an optimized production build ...
+#16 8.078    Downloading swc package @next/swc-linux-x64-gnu...
+#16 12.35 unhandledRejection TypeError: terminated
+#16 12.35     at Fetch.onAborted (node:internal/deps/undici/undici:11209:53)
+#16 12.35     at Fetch.emit (node:events:517:28)
+#16 12.35     at Fetch.terminate (node:internal/deps/undici/undici:10394:14)
+#16 12.35     at Object.onError (node:internal/deps/undici/undici:11327:38)
+#16 12.35     at _Request.onError (node:internal/deps/undici/undici:7479:31)
+#16 12.35     at errorRequest (node:internal/deps/undici/undici:10049:17)
+#16 12.35     at TLSSocket.onSocketClose (node:internal/deps/undici/undici:9204:9)
+#16 12.35     at TLSSocket.emit (node:events:529:35)
+#16 12.35     at node:net:350:12
+#16 12.35     at TCP.done (node:_tls_wrap:657:7) {
+#16 12.35   [cause]: Error: read ECONNRESET
+#16 12.35       at TLSWrap.onStreamRead (node:internal/stream_base_commons:217:20) {
+#16 12.35     errno: -104,
+#16 12.35     code: 'ECONNRESET',
+#16 12.35     syscall: 'read'
+#16 12.35   }
+#16 12.35 }
+#16 ERROR: process "/bin/sh -c npm run build" did not complete successfully: exit code: 1
+------
+ > [builder 5/5] RUN npm run build:
+12.35     at TLSSocket.emit (node:events:529:35)
+12.35     at node:net:350:12
+12.35     at TCP.done (node:_tls_wrap:657:7) {
+12.35   [cause]: Error: read ECONNRESET
+12.35       at TLSWrap.onStreamRead (node:internal/stream_base_commons:217:20) {
+12.35     errno: -104,
+12.35     code: 'ECONNRESET',
+12.35     syscall: 'read'
+12.35   }
+12.35 }
+------
+
+ 4 warnings found (use docker --debug to expand):
+ - SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ENV "NEXTAUTH_SECRET") (line 46)
+ - LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 56)
+ - LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 96)
+ - LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 97)
+Dockerfile:50
+--------------------
+  48 |     
+  49 |     # Build the application
+  50 | >>> RUN npm run build
+  51 |     
+  52 |     # Production image, copy all the files and run next
+--------------------
+ERROR: failed to build: failed to solve: process "/bin/sh -c npm run build" did not complete successfully: exit code: 1
+##########################################
+### Error
+### Wed, 10 Dec 2025 02:09:04 GMT
+##########################################
+
+Command failed with exit code 1: docker buildx build --network host -f /etc/easypanel/projects/qhosting/aurum-station/code/Dockerfile -t easypanel/qhosting/aurum-station --label 'keep=true' --no-cache --build-arg 'DATABASE_URL=postgres://postgres:064ce323a1bcd063838c@qhosting_aurum-station-db:5432/aurum-station-db?sslmode=disable' --build-arg 'NEXTAUTH_SECRET=lmM3csYY5lO99PgS/2EKso34xZtoSy/U6GuhvRWgWAM=' --build-arg 'NEXTAUTH_URL=https://auruminvest.mx' --build-arg 'NEXT_PUBLIC_CHATWOOT_BASE_URL=https://chat.auruminvest.mx' --build-arg 'NEXT_PUBLIC_CHATWOOT_TOKEN=tu_token_aqui' --build-arg 'NODE_ENV=production' --build-arg 'PORT=3000' --build-arg 'CHATWOOT_BASE_URL=https://chat.qhosting.net' --build-arg 'GIT_SHA=75cf29df16fd11d77acb04b377669eaf75570906' /etc/easypanel/projects/qhosting/aurum-station/code/
