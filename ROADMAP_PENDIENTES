@@ -1,0 +1,31 @@
+# 🚧 ROADMAP - Pendientes por Implementar
+
+Lista de tareas, mejoras y características futuras planificadas para Aurum Invest Station.
+
+## 🛠️ Mejoras Técnicas Prioritarias
+
+### 1. Optimización y Mantenimiento
+- [ ] **Chatwoot Real:** Configurar la instancia de producción de Chatwoot o eliminar el componente si no se utiliza.
+- [ ] **Actualización de Metadata:** Migrar la configuración de metadata de Next.js a `viewport export` para eliminar advertencias de depreciación.
+- [ ] **Limpieza de Dependencias:** Auditar y actualizar dependencias (considerar migración a Next.js 15 a futuro).
+
+### 2. DevOps y CI/CD
+- [ ] **Pipeline de CI/CD:** Implementar GitHub Actions u otra herramienta para pruebas y despliegue automático.
+- [ ] **Variables de Entorno:** Configurar gestión segura de secretos para producción (evitar `.env` en imágenes Docker si es posible).
+- [ ] **Monitoreo:** Integrar herramientas de logging y monitoreo (ej. Sentry, Prometheus).
+
+## ✨ Nuevas Funcionalidades
+
+### 3. Trading y Análisis
+- [ ] **Backtesting:** Módulo para probar estrategias con datos históricos.
+- [ ] **Alertas Personalizadas:** Notificaciones por email o Telegram sobre eventos de trading.
+- [ ] **Exportación de Datos:** Permitir a los usuarios descargar sus reportes en CSV/PDF.
+
+### 4. Expansión de Usuario
+- [ ] **Perfil de Usuario Avanzado:** Permitir a los usuarios cambiar contraseña y actualizar datos personales.
+- [ ] **Autenticación 2FA:** Añadir doble factor de autenticación para mayor seguridad.
+- [ ] **Internacionalización (i18n):** Soporte para múltiples idiomas (Inglés/Español).
+
+## 🧪 Calidad y Pruebas
+- [ ] **Tests Unitarios:** Incrementar cobertura con Jest/Vitest.
+- [ ] **Tests E2E:** Implementar pruebas de extremo a extremo con Playwright o Cypress.
