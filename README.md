@@ -9,7 +9,7 @@ Una plataforma completa de trading que integra múltiples brokers, análisis en 
 - **📊 Dashboard en Tiempo Real**: Métricas de trading, equity curve y análisis de rendimiento
 - **🔐 Autenticación Robusta**: Sistema de roles (ADMIN/TRADER) con NextAuth.js
 - **📈 Integración MT5**: Webhooks seguros para datos de trading en tiempo real
-- **🤖 Chatwoot Integration**: Soporte al cliente integrado con identidad de usuario
+- **🤖 n8n Integration**: Integración para automatizaciones y webhooks
 - **🗄️ Base de Datos PostgreSQL**: Esquema completo con Prisma ORM
 - **🎨 UI/UX Moderna**: Interfaz dark theme con Tailwind CSS y Shadcn/UI
 - **🐳 Despliegue Docker**: Configuración optimizada para EasyPanel
@@ -54,8 +54,6 @@ Editar `.env.local`:
 DATABASE_URL=postgresql://username:password@localhost:5432/aurum_invest_station
 NEXTAUTH_SECRET=your-secret-key-here
 NEXTAUTH_URL=http://localhost:3000
-NEXT_PUBLIC_CHATWOOT_BASE_URL=https://your-chatwoot-instance.com
-NEXT_PUBLIC_CHATWOOT_TOKEN=your-chatwoot-token
 ```
 
 ### 4. Configurar base de datos
@@ -93,8 +91,6 @@ El proyecto incluye un Dockerfile optimizado que maneja:
 DATABASE_URL=postgresql://postgres:postgres@postgres:5432/aurum_invest_station
 NEXTAUTH_SECRET=your-generated-secret
 NEXTAUTH_URL=https://yourdomain.com
-NEXT_PUBLIC_CHATWOOT_BASE_URL=https://your-chatwoot-domain.com
-NEXT_PUBLIC_CHATWOOT_TOKEN=your-chatwoot-token
 NODE_ENV=production
 PORT=3000
 ```
@@ -191,7 +187,6 @@ npm run db:seed      # Poblar con datos de ejemplo
 - **Métricas en Tiempo Real**: Equity, drawdown, win rate
 - **Gráfico de Equity Curve**: Visualización del rendimiento
 - **Tabla de Trades Recientes**: Últimas operaciones
-- **Integración Chatwoot**: Soporte al cliente
 - **Gestión de Usuarios**: Sistema de roles y permisos
 
 ## 🤝 Contribuciones

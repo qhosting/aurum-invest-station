@@ -19,7 +19,7 @@ Este documento detalla las funcionalidades implementadas y el estado actual del 
 
 3. **Integraciones**
    - **MetaTrader 5 (MT5):** Recepción de datos vía Webhooks.
-   - **Chatwoot:** Soporte al cliente integrado (versión inicial).
+   - **n8n:** Integración para automatizaciones y webhooks (backend).
 
 4. **Infraestructura y Backend**
    - Base de datos PostgreSQL robusta.

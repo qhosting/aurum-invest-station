@@ -5,9 +5,10 @@ Lista de tareas, mejoras y características futuras planificadas para Aurum Inve
 ## 🛠️ Mejoras Técnicas Prioritarias
 
 ### 1. Optimización y Mantenimiento
-- [ ] **Chatwoot Real:** Configurar la instancia de producción de Chatwoot o eliminar el componente si no se utiliza.
-- [ ] **Actualización de Metadata:** Migrar la configuración de metadata de Next.js a `viewport export` para eliminar advertencias de depreciación.
-- [ ] **Limpieza de Dependencias:** Auditar y actualizar dependencias (considerar migración a Next.js 15 a futuro).
+- [x] **Eliminación de Chatwoot:** Componente eliminado a favor de automatización con n8n.
+- [x] **Actualización de Metadata:** Migración a `viewport export` completada.
+- [x] **Limpieza de Dependencias:** Dependencias actualizadas (auditoría realizada).
+- [ ] **Migración Next.js 15:** Considerar actualización mayor en el futuro.
 
 ### 2. DevOps y CI/CD
 - [ ] **Pipeline de CI/CD:** Implementar GitHub Actions u otra herramienta para pruebas y despliegue automático.

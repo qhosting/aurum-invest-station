@@ -1,8 +1,7 @@
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { Inter, Fira_Code } from "next/font/google"
 import "./globals.css"
 import { AuthProvider } from "@/components/providers/auth-provider"
-import { ChatwootWidget } from "@/components/ChatwootWidget"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -13,6 +12,13 @@ const firaCode = Fira_Code({
   subsets: ["latin"],
   variable: "--font-fira-code",
 })
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#D4AF37",
+  colorScheme: "dark",
+}
 
 export const metadata: Metadata = {
   title: "AURUM INVEST STATION - Professional Trading Dashboard",
@@ -26,9 +32,6 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  viewport: "width=device-width, initial-scale=1",
-  themeColor: "#D4AF37",
-  colorScheme: "dark",
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -67,7 +70,6 @@ export default function RootLayout({
       <body className="min-h-screen bg-[#0A192F] text-white antialiased">
         <AuthProvider>
           {children}
-          <ChatwootWidget />
         </AuthProvider>
       </body>
     </html>
