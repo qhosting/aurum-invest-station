@@ -8,7 +8,7 @@ Lista de tareas, mejoras y características futuras planificadas para Aurum Inve
 - [x] **Eliminación de Chatwoot:** Componente eliminado a favor de automatización con n8n.
 - [x] **Actualización de Metadata:** Migración a `viewport export` completada.
 - [x] **Limpieza de Dependencias:** Dependencias actualizadas (auditoría realizada).
-- [ ] **Migración Next.js 15:** Considerar actualización mayor en el futuro.
+- [x] **Migración Next.js 15:** Actualización a Next.js 15.1 y React 19 completada.
 
 ### 2. DevOps y CI/CD
 - [ ] **Pipeline de CI/CD:** Implementar GitHub Actions u otra herramienta para pruebas y despliegue automático.
