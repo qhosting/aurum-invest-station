@@ -129,6 +129,10 @@ PORT=3000
 ### Variables opcionales
 
 ```bash
+# Chatwoot
+NEXT_PUBLIC_CHATWOOT_TOKEN="token-de-chatwoot"
+NEXT_PUBLIC_CHATWOOT_BASE_URL="https://chat.auruminvest.mx"
+
 # MT5 Webhook
 MT5_WEBHOOK_SECRET="webhook-secret"
 
