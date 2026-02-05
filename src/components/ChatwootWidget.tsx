@@ -36,8 +36,8 @@ export function ChatwootWidget() {
     const chatwootBaseUrl = process.env.NEXT_PUBLIC_CHATWOOT_BASE_URL
 
     // Skip if Chatwoot is not configured or if URL is demo/placeholder
-    if (!chatwootToken || !chatwootBaseUrl || 
-        chatwootBaseUrl.includes('demo') || 
+    if (!chatwootToken || !chatwootBaseUrl ||
+        chatwootBaseUrl.includes('demo') ||
         chatwootToken.includes('demo')) {
       console.info("Chatwoot widget disabled (not configured)")
       return
@@ -82,7 +82,7 @@ export function ChatwootWidget() {
     if (status === "authenticated" && session?.user) {
       const chatwootToken = process.env.NEXT_PUBLIC_CHATWOOT_TOKEN
 
-      if (chatwootToken && window.$chatwoot && 
+      if (chatwootToken && window.$chatwoot &&
           !chatwootToken.includes('demo')) {
         try {
           // Set user identity
